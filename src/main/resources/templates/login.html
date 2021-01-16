@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="utf-8">
+    <title>登录</title>
+    <link rel="stylesheet" th:href="@{/asserts/css_1/style.css}" href="asserts/css_1/style.css">
+<!--    <link rel="stylesheet" th:href="@{/asserts/css/bootstrap.min.css}">-->
+<!--    <link rel="stylesheet" th:href="@{/asserts/css/signin.css}">-->
+    <script type="text/javascript" th:src="@{/asserts/js_1/jquery.min.js}" src="asserts/js_1/jquery.min.js"></script>
+
+</head>
+<body>
+<div class="content">
+    <form action="" method="post" th:action="@{main}">
+        <div class="form sign-in">
+            <h2>登录</h2>
+
+            <label>
+                <span>账号</span>
+                <input name="id" type="text" required="required"/>
+            </label>
+
+            <label>
+                <span>密码</span>
+                <input name="password" type="password" required="required"/>
+            </label>
+
+            <label>
+                <input type="radio" name="optionsRadios"  value=1 checked required="required">
+                <span>学生</span>
+            </label>
+            <label>
+                <input type="radio" name="optionsRadios"  value=2 required="required">
+                <span>宿舍管理员</span>
+            </label>
+            <label>
+                <input type="radio" name="optionsRadios"  value=3 required="required">
+                <span>学校</span>
+            </label>
+            <label>
+                <span style="color: red;" th:text="${error}"></span>
+            </label>
+            <label>
+                <span style="color: red;" th:text="${success}"></span>
+            </label>
+<!--            <p class="forgot-pass"><span name="message">${msg}</span></p>-->
+            <button type="submit" class="submit" onclick="check()">登 录</button>
+        </div>
+    </form>
+    <div class="sub-cont">
+        <div class="img">
+            <div class="img__text m--up">
+                <h2>忘记密码？</h2>
+<!--                <p>立即注册，阅读海量图书！</p>-->
+            </div>
+            <div class="img__text m--in">
+                <h2>已有帐号？</h2>
+                <p>有帐号就登录吧，好久不见了！</p>
+            </div>
+            <div class="img__btn">
+                <span class="m--up">找回密码</span>
+                <span class="m--in">登 录</span>
+            </div>
+        </div>
+        <form action="" method="post" th:action="@{toConfirm}">
+            <div class="form sign-up">
+                <h2>找回密码</h2>
+                <label>
+                    <span>账号</span>
+                    <input name="id" type="text" required="required"/>
+                </label>
+
+                <label>
+                    <span>邮箱</span>
+                    <input  type="text" name="email" required="required"/>
+                </label>
+
+                <label>
+                    <input type="radio" name="optionsRadios" id="op1" value=1 checked>
+                    <span>学生</span>
+                </label>
+                <label>
+
+                    <input type="radio" name="optionsRadios" id="op2" value=2>
+                    <span>宿舍管理员</span>
+                    <label>
+                        <span style="color: red;">[[${error}]]</span>
+                    </label>
+                </label>
+                <button type="submit" class="submit">提交</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script th:src="@{/asserts/js_1/script.js}" src="asserts/js_1/script.js"></script>
+</body>
+</html>
