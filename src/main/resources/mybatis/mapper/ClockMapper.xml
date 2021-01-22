@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.college.mapper.ClockMapper">
+    <select id="find" resultType="com.example.college.pojo.Clock">
+         SELECT * FROM clock WHERE id=#{id}
+    </select>
+    <insert id="insertID">
+        INSERT INTO clock(id) values (#{id})
+    </insert>
+    <delete id="delete">
+        DELETE FROM clock
+    </delete>
+</mapper>

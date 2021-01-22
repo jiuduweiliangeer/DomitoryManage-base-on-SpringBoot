@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+            <div class="layui-header" th:fragment="topbar">
+                <div class="layui-logo">宿舍管理系统</div>
+                <!-- 头部区域（可配合layui已有的水平导航） -->
+                <!--        <ul class="layui-nav layui-layout-left">-->
+                <!--            <li class="layui-nav-item"><a href="">控制台</a></li>-->
+                <!--            <li class="layui-nav-item"><a href="">商品管理</a></li>-->
+                <!--            <li class="layui-nav-item"><a href="">用户</a></li>-->
+                <!--            <li class="layui-nav-item">-->
+                <!--                <a href="javascript:;">其它系统</a>-->
+                <!--                <dl class="layui-nav-child">-->
+                <!--                    <dd><a href="">邮件管理</a></dd>-->
+                <!--                    <dd><a href="">消息管理</a></dd>-->
+                <!--                    <dd><a href="">授权管理</a></dd>-->
+                <!--                </dl>-->
+                <!--            </li>-->
+                <!--        </ul>-->
+                <ul class="layui-nav layui-layout-right">
+                    <li class="layui-nav-item"><a href="" th:href="@{clock}">打卡</a></li>
+                    <li class="layui-nav-item"><a href="" th:href="@{backLogin}">退了</a></li>
+                </ul>
+            </div>
+
+            <div class="layui-side layui-bg-black" th:fragment="siderbar">
+                <div class="layui-side-scroll">
+                    <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                    <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+                        <li class="layui-nav-item layui-nav-itemed">
+                            <a class="" th:href="@{selectAll}" href="javascript:;">本寝室情况</a>
+                            <!--                    <dl class="layui-nav-child">-->
+                            <!--                        <dd><a href="javascript:;">本寝室情况</a></dd>-->
+                            <!--                        <dd><a href="javascript:;">列表二</a></dd>-->
+                            <!--                        <dd><a href="javascript:;">列表三</a></dd>-->
+                            <!--                        <dd><a href="">超链接</a></dd>-->
+                            <!--                    </dl>-->
+                        </li>
+                        <li class="layui-nav-item">
+                            <a th:href="@{selectRelative}" href="javascript:;">相关宿舍</a>
+                            <!--                    <dl class="layui-nav-child">-->
+                            <!--                        <dd><a href="javascript:;">列表一</a></dd>-->
+                            <!--                        <dd><a href="javascript:;">列表二</a></dd>-->
+                            <!--                        <dd><a href="">超链接</a></dd>-->
+                            <!--                    </dl>-->
+                        </li>
+                        <li class="layui-nav-item"><a href="">维修申报</a></li>
+                        <li class="layui-nav-item"><a href="">外出请假</a></li>
+                        <li class="layui-nav-item"><a href="">个人信息</a></li>
+                        <li class="layui-nav-item"><a href="">建议反馈</a></li>
+                    </ul>
+                </div>
+            </div>
+
+
+            <div th:fragment="footer" class="layui-footer">
+                <!-- 底部固定区域 -->
+                © layui.com - 底部固定区域
+            </div>
+
+</html>

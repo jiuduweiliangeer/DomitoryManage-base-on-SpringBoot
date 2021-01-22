@@ -9,4 +9,10 @@
     <update id="setNewPassword">
         UPDATE student SET password=#{password} WHERE stu_id=#{id}
     </update>
+    <select id="findByLocation" resultType="com.example.college.pojo.Student">
+        SELECT * FROM student WHERE location=#{location}
+    </select>
+    <update id="updateState">
+        UPDATE student SET state=#{state} WHERE stu_id=#{id}
+    </update>
 </mapper>
