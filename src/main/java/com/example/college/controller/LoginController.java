@@ -51,6 +51,7 @@ public class LoginController {
         Date dateBegin=format1.parse(dateBeginS);
         Date dateEnd=format1.parse(dateEndS);
         //每天更新一次打卡表，只有再这个时间段内打卡的才会记录进去
+        //不管登陆的是不是学生，都不影响这一步操作
         try{
             Date date1=clockMapper.find(id).getDatethis();
             if (clockMapper.find(id).getDatethis().before(dateBegin)){
@@ -65,6 +66,7 @@ public class LoginController {
         Student student=studentMapper.findById(id);
         Apartment apartment=apartmentMapper.findById(id);
         School school=schoolMapper.findById(id);
+        //学生，宿管，学校管理，1，2，3
         switch (optionsRadios){
             case 1:
                 if (student!=null){

@@ -53,7 +53,7 @@ public class StudentController {
         map.put("stu",studentMapper.findById(id));
         return "student/studentMain";
     }
-    /*本宿舍情况,类似登录*/
+    /*本宿舍情况,类似登录，使用公共页面，在同一个登录id下id已经确定，无需重定向，直接通过公共页面定义url进入Controller即可*/
     @GetMapping("/selectAll/{id}")
     public String studentMain(@PathVariable("id") String id,
                               Map<String,Object> map) throws ParseException {
@@ -99,6 +99,7 @@ public class StudentController {
         map.put("stu",student);
         return "student/studentMain";
     }
+    /*无数据，测试前端页面*/
     @GetMapping("/selectRelative/{id}")
     public String toRelative(@PathVariable("id") String id,
                              Map<String,Object> map){
