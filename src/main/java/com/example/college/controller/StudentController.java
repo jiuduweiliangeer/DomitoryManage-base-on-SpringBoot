@@ -40,11 +40,11 @@ public class StudentController {
         if (dateNow.after(dateBegin)&&dateNow.before(dateEnd)){
             if (studentMapper.findById(id).getState().equals("在校（未打卡）")){
                 studentMapper.updateState(id,"已打卡");
-                clockMapper.insertID(id);
+                clockMapper.insertAll(id,dateNow);
             }else {
                 map.put("error","请不要重复打卡");
             }
-            //此处应上传至历史记录表，暂未完成，先做主体功能，附加表后续接入
+            //此处应上传至历史记录表，暂未完成，先做主体功能，附加表后续接入,缺勤情况不会在这个时间段内显示，所以可以直接修改，此处代码在LoginController
         }else if (dateNow.before(dateBegin)||dateNow.after(dateEnd)){
             map.put("error","不在规定打卡时间内");
         }
@@ -53,7 +53,7 @@ public class StudentController {
         map.put("stu",studentMapper.findById(id));
         return "student/studentMain";
     }
-    /*本宿舍情况*/
+    /*本宿舍情况,类似登录*/
     @GetMapping("/selectAll/{id}")
     public String studentMain(@PathVariable("id") String id,
                               Map<String,Object> map) throws ParseException {
@@ -69,6 +69,15 @@ public class StudentController {
         Date dateEnd=format1.parse(dateEndS);
         Student student=studentMapper.findById(id);
         String state=student.getState();
+        try{
+            if (clockMapper.find(id).getDatethis().before(dateBegin)){
+                clockMapper.delete();//防止第二天有前一天的数据存在，需要清空表，如果本身是当前数据是空表直接catch到下面
+            }
+        }catch (Exception e){
+            if (dateNow.before(dateBegin)||dateNow.after(dateEnd)){
+                clockMapper.delete();//在当天时间中清空表
+            }
+        }
         //判定当前状态，根据时间来确定状态并进行修改，修改之后再进入主界面
         //还应该根据是否请假来进行判断，这一段等后面基本完成再补充
         if (dateNow.before(dateBegin)||dateNow.after(dateEnd)){

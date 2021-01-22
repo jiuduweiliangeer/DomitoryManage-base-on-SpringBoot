@@ -51,8 +51,15 @@ public class LoginController {
         Date dateBegin=format1.parse(dateBeginS);
         Date dateEnd=format1.parse(dateEndS);
         //每天更新一次打卡表，只有再这个时间段内打卡的才会记录进去
-        if (dateNow.after(dateEnd)||dateNow.before(dateBegin)){
-                clockMapper.delete();
+        try{
+            Date date1=clockMapper.find(id).getDatethis();
+            if (clockMapper.find(id).getDatethis().before(dateBegin)){
+                clockMapper.delete();//防止第二天有前一天的数据存在，需要清空表，如果本身是当前数据是空表直接catch到下面,比第二天开始时间还要早的打卡数据直接删除
+            }//高优先级
+        }catch (Exception e){
+            if (dateNow.before(dateBegin)||dateNow.after(dateEnd)){
+                clockMapper.delete();//在当天时间中清空表,也就是在规定时间内清空其他id的表，此处可以没有，但为了减少系统运行冗余，还是加上
+            }
         }
         String s=null;
         Student student=studentMapper.findById(id);
@@ -70,6 +77,7 @@ public class LoginController {
                             if (state.equals("在校（未打卡）")){
                                 studentMapper.updateState(id,"缺勤");
                                 //此处应该上报至缺勤表(缺勤人，缺勤时间)，暂时未做，最后加上
+                                //记录：本系统设定的一天时间为前一天12：00-后一天12：00，也就是说，在12：00前记录的缺勤记录和前一天23：30之后记录的缺勤记录为同一天
                             }
                         }else if (dateNow.after(dateBegin)&&dateNow.before(dateEnd)){
                             if (clockMapper.find(id)==null){
@@ -78,12 +86,19 @@ public class LoginController {
                                 * 如何判断当天是否已经打卡？通过查询打卡表，打卡表当前用户如果存在数据，则不修改，如果不存在，则修改，
                                 * 打卡表每天23：30分应该清空一次（主要为了实现登陆查询改状态）
                                 * */
+                                /*
+                                * 此处有BUG，如果一个学生从前一天缺勤拖到了后一天打卡，则无法上传至缺勤表，因此，给宿舍管理员一个刷新权限，
+                                * 在某个时间前，宿舍管理员需要进行数据刷新，数据刷新所进行的操作为，遍历整栋宿舍到时未打卡的学生，将他们的
+                                * id存储在一个数组中，遍历数组，做一个循环，修改学生状态并上传至缺勤表，展示的时候一般是用不到这里的，但是
+                                * 作为一个BUG，还是得想办法解决，因为使用的SpringBoot是通过Controller运行业务，如果不进入这个Controller，
+                                * 就无法运行，所以会导致这个BUG，目前能想到的最佳解决办法就是管理员手动刷新
+                                *
+                                * */
                             }
                         }
                         List<Student> students=studentMapper.findByLocation(student.getLocation());
                         map.put("students",students);
                         map.put("stu",student);
-
                         s="student/studentMain";
                     }else{
                         map.put("error","您输入的密码错误");

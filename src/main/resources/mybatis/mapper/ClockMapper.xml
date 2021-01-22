@@ -6,8 +6,8 @@
     <select id="find" resultType="com.example.college.pojo.Clock">
          SELECT * FROM clock WHERE id=#{id}
     </select>
-    <insert id="insertID">
-        INSERT INTO clock(id) values (#{id})
+    <insert id="insertAll">
+        INSERT INTO clock(id,datethis) values (#{id},#{datethis})
     </insert>
     <delete id="delete">
         DELETE FROM clock
