@@ -44,6 +44,7 @@ public class StudentController {
         if (dateNow.after(dateBegin)&&dateNow.before(dateEnd)){
             studentMapper.updateState(id,"已打卡");
             clockMapper.insertID(id);
+            //此处应上传至历史记录表，暂未完成，先做主体功能，附加表后续接入
         }else if (dateNow.before(dateBegin)||dateNow.after(dateEnd)){
             map.put("error","不在规定打卡时间内");
         }
