@@ -4,19 +4,13 @@ import com.example.college.mapper.*;
 import com.example.college.pojo.Apartment;
 import com.example.college.pojo.School;
 import com.example.college.pojo.Student;
-import com.example.college.pojo.Templete;
 import com.example.college.sendemail.Demo;
-import com.sun.deploy.net.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.*;
-import javax.xml.ws.Response;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,8 +25,6 @@ public class LoginController {
     ApartmentMapper apartmentMapper;
     @Autowired
     SchoolMapper schoolMapper;
-    @Autowired
-    TempleteMapper templeteMapper;
     @Autowired
     ClockMapper clockMapper;
     @Autowired
@@ -90,8 +82,8 @@ public class LoginController {
                         }
                         List<Student> students=studentMapper.findByLocation(student.getLocation());
                         map.put("students",students);
-                        map.put("id",student.getStu_id());
-                        templeteMapper.insertID(student.getStu_id());
+                        map.put("stu",student);
+
                         s="student/studentMain";
                     }else{
                         map.put("error","您输入的密码错误");

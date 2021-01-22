@@ -28,20 +28,14 @@
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
 <!--头部-->
-    <div th:replace="~{commons/common::topbar}"></div>
-
-
+    <div th:replace="~{commons/common::topbar(id=${stu.getStu_id()},clock='1')}"></div>
 
 <!--侧边栏-->
-    <div th:replace="~{commons/common::siderbar}"></div>
-
-
+    <div th:replace="~{commons/common::siderbar(activeURL='studentMain',id=${stu.getStu_id()})}"></div>
         <!-- 内容主体区域 -->
-
             <div>
-
                 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-                    <h3 th:class="text-info" th:text="${id}"></h3>
+                    <h3 th:class="text-info" th:text="${stu.getStu_id()}"></h3>
                     <h3 th:class="text-info" style="left: auto" th:text="请在当日12：00之后23：30之前打卡，否则将记录为缺勤"></h3>
                     <h3 th:class="text-warning" th:text="${error}"></h3>
                     <div class="table-responsive">
@@ -81,10 +75,6 @@
 <!--        <div style="padding: 15px;">内容主体区域</div>-->
 
 
-    <div th:replace="~{commons/common::footer}" class="layui-footer">
-        <!-- 底部固定区域 -->
-        © layui.com - 底部固定区域
-    </div>
 </div>
 
 <script>

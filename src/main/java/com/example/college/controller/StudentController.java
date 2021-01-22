@@ -2,13 +2,11 @@ package com.example.college.controller;
 
 import com.example.college.mapper.ClockMapper;
 import com.example.college.mapper.StudentMapper;
-import com.example.college.mapper.TempleteMapper;
 import com.example.college.pojo.Student;
-import com.example.college.pojo.Templete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,18 +19,16 @@ public class StudentController {
     @Autowired
     StudentMapper studentMapper;
     @Autowired
-    TempleteMapper templeteMapper;
-    @Autowired
     ClockMapper clockMapper;
     @GetMapping("/backLogin")
     public String backLogin(){
-        templeteMapper.delete();
         return "login";
     }
     /*实现打卡，在当天12：00-23：30之间可以打卡*/
-    @GetMapping("/clock")
-    public String clock(Map<String,Object> map) throws ParseException {
-        String id=templeteMapper.find().getId();
+
+    @GetMapping("/clock/{id}")
+    public String clock(Map<String,Object> map,
+                        @PathVariable String id) throws ParseException {
         Date date=new Date();
         SimpleDateFormat format1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat format2=new SimpleDateFormat("yyyy-MM-dd");
@@ -42,15 +38,64 @@ public class StudentController {
         Date dateBegin=format1.parse(dateBeginS);
         Date dateEnd=format1.parse(dateEndS);
         if (dateNow.after(dateBegin)&&dateNow.before(dateEnd)){
-            studentMapper.updateState(id,"已打卡");
-            clockMapper.insertID(id);
+            if (studentMapper.findById(id).getState().equals("在校（未打卡）")){
+                studentMapper.updateState(id,"已打卡");
+                clockMapper.insertID(id);
+            }else {
+                map.put("error","请不要重复打卡");
+            }
             //此处应上传至历史记录表，暂未完成，先做主体功能，附加表后续接入
         }else if (dateNow.before(dateBegin)||dateNow.after(dateEnd)){
             map.put("error","不在规定打卡时间内");
         }
         List<Student> students=studentMapper.findByLocation(studentMapper.findById(id).getLocation());
         map.put("students",students);
-        map.put("id",id);
+        map.put("stu",studentMapper.findById(id));
         return "student/studentMain";
+    }
+    /*本宿舍情况*/
+    @GetMapping("/selectAll/{id}")
+    public String studentMain(@PathVariable("id") String id,
+                              Map<String,Object> map) throws ParseException {
+        /*每次进入都需要检查状态，此处复制登录*/
+        Date date=new Date();
+        /*判定时间,12:00-12:00+1为一个周期*/
+        SimpleDateFormat format1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat format2=new SimpleDateFormat("yyyy-MM-dd");
+        Date dateNow=format1.parse(format1.format(date));//转换之后是String类型
+        String dateBeginS=format2.format(date)+" 12:00:00";//String 拼接
+        String dateEndS=format2.format(date)+" 23:30:00";
+        Date dateBegin=format1.parse(dateBeginS);
+        Date dateEnd=format1.parse(dateEndS);
+        Student student=studentMapper.findById(id);
+        String state=student.getState();
+        //判定当前状态，根据时间来确定状态并进行修改，修改之后再进入主界面
+        //还应该根据是否请假来进行判断，这一段等后面基本完成再补充
+        if (dateNow.before(dateBegin)||dateNow.after(dateEnd)){
+            if (state.equals("在校（未打卡）")){
+                studentMapper.updateState(id,"缺勤");
+                //此处应该上报至缺勤表(缺勤人，缺勤时间)，暂时未做，最后加上
+            }
+        }else if (dateNow.after(dateBegin)&&dateNow.before(dateEnd)){
+            if (clockMapper.find(id)==null){
+                studentMapper.updateState(id,"在校（未打卡）");
+                /*、
+                 * 如何判断当天是否已经打卡？通过查询打卡表，打卡表当前用户如果存在数据，则不修改，如果不存在，则修改，
+                 * 打卡表每天23：30分应该清空一次（主要为了实现登陆查询改状态）
+                 * */
+            }
+        }
+        List<Student> students=studentMapper.findByLocation(student.getLocation());
+        map.put("students",students);
+        map.put("stu",student);
+        return "student/studentMain";
+    }
+    @GetMapping("/selectRelative/{id}")
+    public String toRelative(@PathVariable("id") String id,
+                             Map<String,Object> map){
+        List<Student> students=studentMapper.findByLocation(studentMapper.findById(id).getLocation());
+        map.put("students",students);
+        map.put("stu",studentMapper.findById(id));
+        return "student/studentRelative";
     }
 }
