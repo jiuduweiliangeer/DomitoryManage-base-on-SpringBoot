@@ -58,8 +58,9 @@ public class LoginController {
         String dateEndS=format2.format(date)+" 23:30:00";
         Date dateBegin=format1.parse(dateBeginS);
         Date dateEnd=format1.parse(dateEndS);
-        if (dateNow.after(dateEnd)){
-
+        //每天更新一次打卡表，只有再这个时间段内打卡的才会记录进去
+        if (dateNow.after(dateEnd)||dateNow.before(dateBegin)){
+                clockMapper.delete();
         }
         String s=null;
         Student student=studentMapper.findById(id);
