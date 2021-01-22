@@ -3,6 +3,8 @@ package com.example.college.controller;
 import com.example.college.mapper.ClockMapper;
 import com.example.college.mapper.StudentMapper;
 import com.example.college.pojo.Student;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,7 @@ import java.util.Map;
 
 @Controller
 public class StudentController {
+    Logger logger= LoggerFactory.getLogger(getClass());
     @Autowired
     StudentMapper studentMapper;
     @Autowired
@@ -69,14 +72,9 @@ public class StudentController {
         Date dateEnd=format1.parse(dateEndS);
         Student student=studentMapper.findById(id);
         String state=student.getState();
-        try{
-            if (clockMapper.find(id).getDatethis().before(dateBegin)){
-                clockMapper.delete();//防止第二天有前一天的数据存在，需要清空表，如果本身是当前数据是空表直接catch到下面
-            }
-        }catch (Exception e){
-            if (dateNow.before(dateBegin)||dateNow.after(dateEnd)){
-                clockMapper.delete();//在当天时间中清空表
-            }
+        if (dateNow.before(dateBegin)||dateNow.after(dateEnd)){
+            logger.info("清空打卡表");
+            clockMapper.delete();//在当天时间中清空表
         }
         //判定当前状态，根据时间来确定状态并进行修改，修改之后再进入主界面
         //还应该根据是否请假来进行判断，这一段等后面基本完成再补充
@@ -86,6 +84,14 @@ public class StudentController {
                 //此处应该上报至缺勤表(缺勤人，缺勤时间)，暂时未做，最后加上
             }
         }else if (dateNow.after(dateBegin)&&dateNow.before(dateEnd)){
+            try{
+                if (clockMapper.find(id).getDatethis().before(dateBegin)){
+                    logger.info("调用二重判断删除打卡表");
+                    clockMapper.delete();//防止第二天有前一天的数据存在，需要清空表,如果本身已经为空则不影响后续操作
+                }
+            }catch (Exception e){
+                logger.warn("当前数据为空");
+            }
             if (clockMapper.find(id)==null){
                 studentMapper.updateState(id,"在校（未打卡）");
                 /*、

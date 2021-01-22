@@ -5,6 +5,8 @@ import com.example.college.pojo.Apartment;
 import com.example.college.pojo.School;
 import com.example.college.pojo.Student;
 import com.example.college.sendemail.Demo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,7 @@ import java.util.Map;
 
 @Controller
 public class LoginController {
+    Logger logger= LoggerFactory.getLogger(getClass());
     @Autowired
     StudentMapper studentMapper;
     @Autowired
@@ -52,15 +55,9 @@ public class LoginController {
         Date dateEnd=format1.parse(dateEndS);
         //每天更新一次打卡表，只有再这个时间段内打卡的才会记录进去
         //不管登陆的是不是学生，都不影响这一步操作
-        try{
-            Date date1=clockMapper.find(id).getDatethis();
-            if (clockMapper.find(id).getDatethis().before(dateBegin)){
-                clockMapper.delete();//防止第二天有前一天的数据存在，需要清空表，如果本身是当前数据是空表直接catch到下面,比第二天开始时间还要早的打卡数据直接删除
-            }//高优先级
-        }catch (Exception e){
-            if (dateNow.before(dateBegin)||dateNow.after(dateEnd)){
-                clockMapper.delete();//在当天时间中清空表,也就是在规定时间内清空其他id的表，此处可以没有，但为了减少系统运行冗余，还是加上
-            }
+        if (dateNow.before(dateBegin)||dateNow.after(dateEnd)){
+            logger.info("清空打卡表");
+            clockMapper.delete();
         }
         String s=null;
         Student student=studentMapper.findById(id);
@@ -82,6 +79,17 @@ public class LoginController {
                                 //记录：本系统设定的一天时间为前一天12：00-后一天12：00，也就是说，在12：00前记录的缺勤记录和前一天23：30之后记录的缺勤记录为同一天
                             }
                         }else if (dateNow.after(dateBegin)&&dateNow.before(dateEnd)){
+                            try{
+                                if(clockMapper.find(id).getDatethis().before(dateBegin)){
+                                    logger.info("调用二重判定清除表");
+                                    clockMapper.delete();//防止第二天有前一天的数据存在，需要清空表，当天的打卡数据不会清空，使用此步的主要原因还是Controller需要进入页面响应
+                                    /*如果前一天打卡的记录没有在上面的判定时间中进入Controller清空，则会导致后面的修改判断出错
+                                    * 所以设定这里的判断来避免错误*/
+                                }
+                            }catch (Exception e){
+                                logger.warn("当前数据为空");
+                            }
+
                             if (clockMapper.find(id)==null){
                                 studentMapper.updateState(id,"在校（未打卡）");
                                 /*、
