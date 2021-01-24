@@ -7,8 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -105,13 +104,36 @@ public class StudentController {
         map.put("stu",student);
         return "student/studentMain";
     }
-    /*无数据，测试前端页面*/
+    /*进入宿舍相关页面使用GET*/
     @GetMapping("/selectRelative/{id}")
     public String toRelative(@PathVariable("id") String id,
                              Map<String,Object> map){
-        List<Student> students=studentMapper.findByLocation(studentMapper.findById(id).getLocation());
+        Student stu=studentMapper.findById(id);
+        List<Student> students=studentMapper.selectRelative(stu.getMajor(),stu.getGrade(),stu.getNumber());
         map.put("students",students);
-        map.put("stu",studentMapper.findById(id));
+        map.put("stu",stu);
+        return "student/studentRelative";
+    }
+    /*查找相关属性，提交form表单，使用POST请求，url不变*/
+    @PostMapping("/selectRelative/{id}")
+    public String selectRelative(@PathVariable("id") String id,
+                                 @RequestParam("sex") String sex,
+                                 @RequestParam("username") String username,
+                                 @RequestParam("stu_id") String stu_id,
+                                 Map<String,Object> map){
+        Student stu=studentMapper.findById(id);
+        if (sex==""){
+            sex=null;
+        }
+        if (username==""){
+            username=null;
+        }
+        if (stu_id==""){
+            stu_id=null;
+        }
+        List<Student> students=studentMapper.selectByRelative(stu.getMajor(),stu.getGrade(),stu.getNumber(),sex,username,stu_id);
+        map.put("students",students);
+        map.put("stu",stu);
         return "student/studentRelative";
     }
 }

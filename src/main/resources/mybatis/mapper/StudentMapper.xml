@@ -15,4 +15,28 @@
     <update id="updateState">
         UPDATE student SET state=#{state} WHERE stu_id=#{id}
     </update>
+    <select id="selectRelative" resultType="com.example.college.pojo.Student">
+        SELECT * FROM student WHERE major=#{major} AND grade=#{grade} AND number=#{number}
+    </select>
+    <select id="selectByRelative" resultType="com.example.college.pojo.Student">
+        SELECT * FROM student WHERE major=#{major} AND grade=#{grade} AND number=#{number}
+        <if test="sex !=null">
+            AND sex=#{sex}
+            <if test="username !=null">
+                AND username=#{username}
+                <if test="stu_id !=null">
+                    AND stu_id=#{stu_id}
+                </if>
+            </if>
+        </if>
+        <if test="username !=null">
+            AND username=#{username}
+            <if test="stu_id !=null">
+                AND stu_id=#{stu_id}
+            </if>
+        </if>
+        <if test="stu_id !=null">
+            AND stu_id=#{stu_id}
+        </if>
+    </select>
 </mapper>

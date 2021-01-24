@@ -38,7 +38,7 @@ public class LoginController {
         return "login";
     }
     /*登录，做判定，看当前状态来判定是否缺勤（针对学生）*/
-    @RequestMapping("/main")
+    @PostMapping("/main")
     public String toMain(@RequestParam("id") String id,
                                 @RequestParam("password") String password,
                                 @RequestParam("optionsRadios") Integer optionsRadios,
@@ -156,7 +156,7 @@ public class LoginController {
         return s;
     }
     /*发邮件，去验证页面*/
-    @RequestMapping("/toConfirm")
+    @PostMapping("/toConfirm")
     public String Confirm(@RequestParam("id") String id,
                             @RequestParam("email") String email,
                             @RequestParam("optionsRadios") Integer optionsRadios,

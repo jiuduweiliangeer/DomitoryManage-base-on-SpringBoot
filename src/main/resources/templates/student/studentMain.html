@@ -55,15 +55,15 @@
                             </thead>
                             <tbody>
                             <tr th:each="student:${students}">
-                                <td th:text="${student.getStu_id()}"></td>
-                                <td th:text="${student.getUsername()}"></td>
-                                <td th:text="${student.getSex()}"></td>
-                                <td th:text="${student.getGrade()}"></td>
-                                <td th:text="${student.getNumber()}"></td>
-                                <td th:text="${student.getLocation()}"></td>
-                                <td th:text="${student.getEmail()}"></td>
-                                <td th:text="${student.getMajor()}"></td>
-                                <td th:text="${student.getState()}"></td>
+                                <td th:text="${student.stu_id}"></td>
+                                <td th:text="${student.username}"></td>
+                                <td th:text="${student.sex}"></td>
+                                <td th:text="${student.grade}"></td>
+                                <td th:text="${student.number}"></td>
+                                <td th:text="${student.location}"></td>
+                                <td th:text="${student.email}"></td>
+                                <td th:text="${student.major}"></td>
+                                <td th:text="${student.state}"></td>
                             </tr>
                             </tbody>
                         </table>

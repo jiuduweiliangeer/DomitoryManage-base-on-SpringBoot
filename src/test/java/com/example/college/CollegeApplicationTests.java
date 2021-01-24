@@ -3,6 +3,7 @@ package com.example.college;
 import com.example.college.mapper.ClockMapper;
 import com.example.college.mapper.StudentMapper;
 import com.example.college.pojo.Clock;
+import com.example.college.pojo.Student;
 import org.apache.ibatis.javassist.Loader;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,4 +52,9 @@ class CollegeApplicationTests {
         System.out.println(clock.toString());
 
     }
+/*    @Test
+    public void testSelectRelative(){
+        List<Student> students=studentMapper.selectByRelative(null,"wangjiu",null);
+        System.out.println(students);
+    }*/
 }
