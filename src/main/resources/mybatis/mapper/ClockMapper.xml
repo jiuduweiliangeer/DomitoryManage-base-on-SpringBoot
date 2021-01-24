@@ -12,4 +12,7 @@
     <delete id="delete">
         DELETE FROM clock
     </delete>
+    <delete id="deleteID">
+        DELETE FROM clock WHERE id=#{id}
+    </delete>
 </mapper>

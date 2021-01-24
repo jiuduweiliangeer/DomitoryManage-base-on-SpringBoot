@@ -10,4 +10,5 @@ public interface ClockMapper {
     public Clock find(String id);
     public void insertAll(String id, Date datethis);
     public void delete();
+    public void deleteID(String id);
 }

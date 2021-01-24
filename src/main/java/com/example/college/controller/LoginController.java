@@ -77,17 +77,25 @@ public class LoginController {
                                 studentMapper.updateState(id,"缺勤");
                                 //此处应该上报至缺勤表(缺勤人，缺勤时间)，暂时未做，最后加上
                                 //记录：本系统设定的一天时间为前一天12：00-后一天12：00，也就是说，在12：00前记录的缺勤记录和前一天23：30之后记录的缺勤记录为同一天
+                                /*
+                                 * 此处有BUG，如果一个学生从前一天缺勤拖到了后一天打卡，则无法上传至缺勤表，因此，给宿舍管理员一个刷新权限，
+                                 * 在某个时间前，宿舍管理员需要进行数据刷新，数据刷新所进行的操作为，遍历整栋宿舍到时未打卡的学生，将他们的
+                                 * id存储在一个数组中，遍历数组，做一个循环，修改学生状态并上传至缺勤表，展示的时候一般是用不到这里的，但是
+                                 * 作为一个BUG，还是得想办法解决，因为使用的SpringBoot是通过Controller运行业务，如果不进入这个Controller，
+                                 * 就无法运行，所以会导致这个BUG，目前能想到的最佳解决办法就是管理员手动刷新
+                                 *
+                                 * */
                             }
                         }else if (dateNow.after(dateBegin)&&dateNow.before(dateEnd)){
                             try{
                                 if(clockMapper.find(id).getDatethis().before(dateBegin)){
                                     logger.info("调用二重判定清除表");
-                                    clockMapper.delete();//防止第二天有前一天的数据存在，需要清空表，当天的打卡数据不会清空，使用此步的主要原因还是Controller需要进入页面响应
+                                    clockMapper.deleteID(id);//防止第二天有前一天的数据存在，需要清空表，当天的打卡数据不会清空，使用此步的主要原因还是Controller需要进入页面响应
                                     /*如果前一天打卡的记录没有在上面的判定时间中进入Controller清空，则会导致后面的修改判断出错
                                     * 所以设定这里的判断来避免错误*/
                                 }
                             }catch (Exception e){
-                                logger.warn("当前数据为空");
+                                logger.warn("当前打卡表数据为空");
                             }
 
                             if (clockMapper.find(id)==null){
@@ -96,14 +104,7 @@ public class LoginController {
                                 * 如何判断当天是否已经打卡？通过查询打卡表，打卡表当前用户如果存在数据，则不修改，如果不存在，则修改，
                                 * 打卡表每天23：30分应该清空一次（主要为了实现登陆查询改状态）
                                 * */
-                                /*
-                                * 此处有BUG，如果一个学生从前一天缺勤拖到了后一天打卡，则无法上传至缺勤表，因此，给宿舍管理员一个刷新权限，
-                                * 在某个时间前，宿舍管理员需要进行数据刷新，数据刷新所进行的操作为，遍历整栋宿舍到时未打卡的学生，将他们的
-                                * id存储在一个数组中，遍历数组，做一个循环，修改学生状态并上传至缺勤表，展示的时候一般是用不到这里的，但是
-                                * 作为一个BUG，还是得想办法解决，因为使用的SpringBoot是通过Controller运行业务，如果不进入这个Controller，
-                                * 就无法运行，所以会导致这个BUG，目前能想到的最佳解决办法就是管理员手动刷新
-                                *
-                                * */
+
                             }
                         }
                         List<Student> students=studentMapper.findByLocation(student.getLocation());

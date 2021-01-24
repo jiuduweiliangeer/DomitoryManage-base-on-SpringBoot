@@ -87,10 +87,10 @@ public class StudentController {
             try{
                 if (clockMapper.find(id).getDatethis().before(dateBegin)){
                     logger.info("调用二重判断删除打卡表");
-                    clockMapper.delete();//防止第二天有前一天的数据存在，需要清空表,如果本身已经为空则不影响后续操作
+                    clockMapper.deleteID(id);//防止第二天有前一天的数据存在，需要清空表,如果本身已经为空则不影响后续操作
                 }
             }catch (Exception e){
-                logger.warn("当前数据为空");
+                logger.warn("当前打卡表数据为空");
             }
             if (clockMapper.find(id)==null){
                 studentMapper.updateState(id,"在校（未打卡）");
