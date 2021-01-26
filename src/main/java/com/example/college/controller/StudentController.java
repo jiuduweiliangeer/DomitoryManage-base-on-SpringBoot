@@ -1,7 +1,8 @@
 package com.example.college.controller;
 
-import com.example.college.mapper.ClockMapper;
-import com.example.college.mapper.StudentMapper;
+import com.example.college.mapper.*;
+import com.example.college.pojo.Impair;
+import com.example.college.pojo.Leave_stu;
 import com.example.college.pojo.Student;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
 @Controller
 public class StudentController {
     Logger logger= LoggerFactory.getLogger(getClass());
@@ -22,6 +22,14 @@ public class StudentController {
     StudentMapper studentMapper;
     @Autowired
     ClockMapper clockMapper;
+    @Autowired
+    ImpairMapper impairMapper;
+    @Autowired
+    Leave_stuMapper leaveStuMapper;
+    @Autowired
+    SuggestMapper suggestMapper;
+    SimpleDateFormat format1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat format2=new SimpleDateFormat("yyyy-MM-dd");
     @GetMapping("/backLogin")
     public String backLogin(){
         return "login";
@@ -32,8 +40,6 @@ public class StudentController {
     public String clock(Map<String,Object> map,
                         @PathVariable String id) throws ParseException {
         Date date=new Date();
-        SimpleDateFormat format1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat format2=new SimpleDateFormat("yyyy-MM-dd");
         Date dateNow=format1.parse(format1.format(date));//转换之后是String类型
         String dateBeginS=format2.format(date)+" 12:00:00";//String 拼接
         String dateEndS=format2.format(date)+" 23:30:00";
@@ -62,8 +68,6 @@ public class StudentController {
         /*每次进入都需要检查状态，此处复制登录*/
         Date date=new Date();
         /*判定时间,12:00-12:00+1为一个周期*/
-        SimpleDateFormat format1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat format2=new SimpleDateFormat("yyyy-MM-dd");
         Date dateNow=format1.parse(format1.format(date));//转换之后是String类型
         String dateBeginS=format2.format(date)+" 12:00:00";//String 拼接
         String dateEndS=format2.format(date)+" 23:30:00";
@@ -135,5 +139,84 @@ public class StudentController {
         map.put("students",students);
         map.put("stu",stu);
         return "student/studentRelative";
+    }
+    /*进入申报页面*/
+    @GetMapping("/impair/{id}")
+    public String toImpair(@PathVariable("id") String id,
+                           Map<String,Object> map) {
+        List<Impair> impairs=null;
+        try {
+            impairs=impairMapper.findByID(id);
+        }catch (Exception e){
+            logger.warn("当前申报表为空");
+        }
+        map.put("impairs",impairs);
+        map.put("stu",studentMapper.findById(id));
+        return "student/studentImpair";
+    }
+    /*提交申报信息*/
+    @PostMapping("/impair/{id}")
+    public String SelectImpair(@PathVariable("id") String id,
+                               @RequestParam("thisname") String thisname,
+                               @RequestParam("content") String content,
+                               Map<String,Object> map) throws ParseException {
+        Date date=new Date();
+        Student student=studentMapper.findById(id);
+        System.out.println(format1.parse(format1.format(date)));
+        impairMapper.insertImpair(id, student.getLocation(),thisname,format1.parse(format1.format(date)),content,"待处理",student.getUsername());
+        List<Impair> impairs=impairMapper.findByID(id);
+        map.put("impairs",impairs);
+        map.put("stu",student);
+        return "student/studentImpair";
+
+    }
+    /*进入请假页面*/
+    @GetMapping("/leave/{id}")
+    public String toLeave(@PathVariable("id") String id,
+                          Map<String,Object> map){
+        List<Leave_stu> leaves=null;
+        try {
+            leaves= leaveStuMapper.findByID(id);
+        }catch (Exception e){
+            logger.warn("当前请假表为空");
+        }
+        map.put("leaves",leaves);
+        map.put("stu",studentMapper.findById(id));
+        return "student/studentLeave";
+    }
+    //*提交请假信息*//*
+    @PostMapping("/leave/{id}")
+    public String SelectLeave(@PathVariable("id") String id,
+                              @RequestParam("now_time") String now_time,
+                              @RequestParam("end_time") String end_time,
+                              @RequestParam("reason") String reason,
+                              Map<String,Object> map) throws ParseException {
+        Student student=studentMapper.findById(id);
+        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+        Date date1= format1.parse(now_time.replace("T"," ")+":00");
+        Date date2= format1.parse(end_time.replace("T"," ")+":00");
+        leaveStuMapper.insertLeave(id,student.getUsername(),student.getLocation(),reason,date1,date2,"待处理");
+        List<Leave_stu> leaves= leaveStuMapper.findByID(id);
+        map.put("leaves",leaves);
+        map.put("stu",student);
+        return "student/studentLeave";
+    }
+    /*进入建议页面*/
+    @GetMapping("/suggest/{id}")
+    public String toSuggest(@PathVariable("id") String id,
+                            Map<String,Object> map){
+        map.put("stu",studentMapper.findById(id));
+        return "student/studentSuggest";
+    }
+    /*提交建议*/
+    @PostMapping("/suggest/{id}")
+    public String SelectSuggest(@PathVariable("id") String id,
+                                @RequestParam("content") String content,
+                                Map<String,Object> map) throws ParseException {
+        Date date=new Date();
+        Student student=studentMapper.findById(id);
+        suggestMapper.insertSuggest(id,student.getUsername(),student.getLocation(),format1.parse(format1.format(date)),content);
+        map.put("stu",student);
+        return "student/studentSuggest";
     }
 }

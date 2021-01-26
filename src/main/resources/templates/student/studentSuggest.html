@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>layout 后台大布局 - Layui</title>
+
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" href="../src/css/layui.css">
+    <link th:href="@{/asserts/css/bootstrap.min.css}" href="../../static/asserts/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link th:href="@{/asserts/css/dashboard.css}" href="../../static/asserts/css/dashboard.css" rel="stylesheet">
+
+    <script th:src="@{/layui/layui.js}" src="../src/layui.js"></script>
+</head>
+<body>
+<div class="layui-layout layui-layout-admin">
+    <div th:replace="~{commons/common::topbar(clock='6',id=${stu.getStu_id()})}"></div>
+    <div th:replace="~{commons/common::siderbar(activeURL='studentLeave',id=${stu.getStu_id()})}"></div>
+    //内容主体
+    <div class="layui-body">
+
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
+            <legend>意见反馈，请您留下宝贵意见: </legend>
+        </fieldset>
+
+        <form class="layui-form>" action="" th:action="@{/suggest/{id}(id=${stu.getStu_id()})}" method="post">
+
+            <div class="layui-form-item">
+                <label style="padding: 5px;text-align: center" class="layui-form-label">姓  名:</label>
+                <div class="layui-input-inline">
+                    <input type="text" th:value="${stu.getUsername()}" name="" lay-verify="title" autocomplete="off" placeholder="请输入姓名" class="layui-input"disabled>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label style="padding: 5px;text-align: center" class="layui-form-label">寝  室:</label>
+                <div class="layui-input-inline">
+                    <input type="text" th:value="${stu.getLocation()}" name="" placeholder="请输入寝室" autocomplete="off" class="layui-input" disabled>
+                </div>
+            </div>
+
+            <div class="layui-form-item ">
+                <label style="margin: auto; padding: 5px"   class="layui-form-label">意见内容: </label>
+                <div class="layui-input-block">
+                    <textarea th:name="content" placeholder="请输入内容" class="layui-textarea" name="desc" required="required"></textarea>
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<script>
+</script>
+
+
+
+
+</body>
+</html>

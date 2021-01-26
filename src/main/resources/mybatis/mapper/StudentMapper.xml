@@ -28,6 +28,9 @@
                     AND stu_id=#{stu_id}
                 </if>
             </if>
+            <if test="stu_id !=null">
+                AND stu_id=#{stu_id}
+            </if>
         </if>
         <if test="username !=null">
             AND username=#{username}

@@ -1,10 +1,11 @@
 package com.example.college;
 
 import com.example.college.mapper.ClockMapper;
+import com.example.college.mapper.ImpairMapper;
+import com.example.college.mapper.Leave_stuMapper;
 import com.example.college.mapper.StudentMapper;
 import com.example.college.pojo.Clock;
-import com.example.college.pojo.Student;
-import org.apache.ibatis.javassist.Loader;
+import com.example.college.pojo.Leave_stu;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,4 +58,17 @@ class CollegeApplicationTests {
         List<Student> students=studentMapper.selectByRelative(null,"wangjiu",null);
         System.out.println(students);
     }*/
+@Autowired
+Leave_stuMapper leaveStuMapper;
+@Autowired
+    ImpairMapper impairMapper;
+    @Test
+    public void testInsertLeave() throws ParseException {
+
+        leaveStuMapper.insertLeave("1","2","12","ww",format.parse(format.format(date)),format.parse(format.format(date)),"dd");
+        List<Leave_stu> leaves= leaveStuMapper.findByID("1");
+//        impairMapper.insertImpair("1","2","dw",format.parse(format.format(date)),"d","d","2");
+        //      List<Impair> impairs=impairMapper.findByID("1");
+        System.out.println(leaves.toString());
+    }
 }

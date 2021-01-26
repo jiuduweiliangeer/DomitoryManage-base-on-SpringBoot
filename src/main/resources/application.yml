@@ -8,6 +8,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
   thymeleaf:
     cache: false
+  mvc:
+    format:
+      date: yyyy-MM-dd HH:mm:ss
 mybatis:
   config-location: classpath:mybatis/mybatis-config.xml
   mapper-locations: classpath:mybatis/mapper/*.xml

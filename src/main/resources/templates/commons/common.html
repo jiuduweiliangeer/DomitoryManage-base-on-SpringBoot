@@ -49,10 +49,18 @@
                             <!--                        <dd><a href="">超链接</a></dd>-->
                             <!--                    </dl>-->
                         </li>
-                        <li class="layui-nav-item"><a href="">维修申报</a></li>
-                        <li class="layui-nav-item"><a href="">外出请假</a></li>
-                        <li class="layui-nav-item"><a href="">个人信息</a></li>
-                        <li class="layui-nav-item"><a href="">建议反馈</a></li>
+                        <li th:class="${activeURL=='studentImpair'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
+                            <a th:href="@{/impair/{id}(id=${id})}">维修申报</a>
+                        </li>
+                        <li th:class="${activeURL=='studentLeave'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
+                            <a th:href="@{/leave/{id}(id=${id})}">外出请假</a>
+                        </li>
+                        <li class="layui-nav-item">
+                            <a href="">个人信息</a>
+                        </li>
+                        <li th:class="${activeURL=='studentSuggest'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
+                            <a th:href="@{/suggest/{id}(id=${id})}">建议反馈</a>
+                        </li>
                     </ul>
                 </div>
             </div>

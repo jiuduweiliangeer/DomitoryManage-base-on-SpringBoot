@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.college.mapper.ImpairMapper">
+    <select id="findByID" resultType="com.example.college.pojo.Impair">
+         SELECT * FROM impair WHERE id=#{id}
+    </select>
+    <insert id="insertImpair">
+        INSERT INTO impair(id,location,thisname,thistime,content,is_deal,username)
+        VALUES (#{id},#{location},#{thisname},#{thistime},#{content},#{is_deal},#{username})
+    </insert>
+</mapper>

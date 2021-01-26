@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.college.mapper.Leave_stuMapper">
+    <select id="findByID" resultType="com.example.college.pojo.Leave_stu">
+         SELECT * FROM leave_stu WHERE id=#{id}
+    </select>
+    <insert id="insertLeave">
+        INSERT INTO leave_stu(id,username,location,reason,now_time,end_time,state)
+        VALUES (#{id},#{username},#{location},#{reason},#{now_time},#{end_time},#{state})
+    </insert>
+</mapper>
