@@ -192,7 +192,6 @@ public class StudentController {
                               @RequestParam("reason") String reason,
                               Map<String,Object> map) throws ParseException {
         Student student=studentMapper.findById(id);
-        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
         Date date1= format1.parse(now_time.replace("T"," ")+":00");
         Date date2= format1.parse(end_time.replace("T"," ")+":00");
         leaveStuMapper.insertLeave(id,student.getUsername(),student.getLocation(),reason,date1,date2,"待处理");
