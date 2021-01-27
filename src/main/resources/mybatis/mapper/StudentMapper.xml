@@ -6,8 +6,14 @@
     <select id="findById" resultType="com.example.college.pojo.Student">
          SELECT * FROM student WHERE stu_id=#{id}
     </select>
+    <select id="findEmail" resultType="com.example.college.pojo.Student">
+        SELECT * FROM student WHERE email=#{email}
+    </select>
     <update id="setNewPassword">
         UPDATE student SET password=#{password} WHERE stu_id=#{id}
+    </update>
+    <update id="setEmail">
+        UPDATE student SET email=#{email} WHERE stu_id=#{id}
     </update>
     <select id="findByLocation" resultType="com.example.college.pojo.Student">
         SELECT * FROM student WHERE location=#{location}

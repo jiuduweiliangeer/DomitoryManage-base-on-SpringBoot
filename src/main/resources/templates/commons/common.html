@@ -55,8 +55,8 @@
                         <li th:class="${activeURL=='studentLeave'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
                             <a th:href="@{/leave/{id}(id=${id})}">外出请假</a>
                         </li>
-                        <li class="layui-nav-item">
-                            <a href="">个人信息</a>
+                        <li th:class="${activeURL=='personalMessage'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
+                            <a th:href="@{/personal/{id}(id=${id})}">个人信息</a>
                         </li>
                         <li th:class="${activeURL=='studentSuggest'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
                             <a th:href="@{/suggest/{id}(id=${id})}">建议反馈</a>

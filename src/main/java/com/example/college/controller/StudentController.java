@@ -1,9 +1,12 @@
 package com.example.college.controller;
 
 import com.example.college.mapper.*;
+import com.example.college.pojo.Apartment;
 import com.example.college.pojo.Impair;
 import com.example.college.pojo.Leave_stu;
 import com.example.college.pojo.Student;
+import com.example.college.sendemail.Demo;
+import com.example.college.sendemail.Send;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,10 @@ public class StudentController {
     Leave_stuMapper leaveStuMapper;
     @Autowired
     SuggestMapper suggestMapper;
+    @Autowired
+    ApartmentMapper apartmentMapper;
+    @Autowired
+    Demo demo;
     SimpleDateFormat format1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     SimpleDateFormat format2=new SimpleDateFormat("yyyy-MM-dd");
     @GetMapping("/backLogin")
@@ -218,4 +225,102 @@ public class StudentController {
         map.put("stu",student);
         return "student/studentSuggest";
     }
+    /*进入个人信息*/
+    @GetMapping("/personal/{id}")
+    public String toPersonal(@PathVariable("id") String id,
+                             Map<String,Object> map){
+        map.put("stu",studentMapper.findById(id));
+        return "student/personalMessage";
+    }
+    /*进入修改密码界面*/
+    @GetMapping("/personal/reset/{id}")
+    public String toReset(@PathVariable("id") String id,
+                          Map<String,Object> map){
+        map.put("stu",studentMapper.findById(id));
+        return "student/resetPassword";
+    }
+    /*修改密码*/
+    @PostMapping("/personal/reset/{id}")
+    public String resetPassword(@PathVariable("id") String id,
+                                @RequestParam("old_password") String old_password,
+                                @RequestParam("new_password") String new_password,
+                                Map<String,Object> map){
+        String s=null;
+        Student student=studentMapper.findById(id);
+        map.put("stu",student);
+        if (student.getPassword().equals(old_password)){
+            studentMapper.setNewPassword(id,new_password);
+            s="student/personalMessage";
+        }else {
+            map.put("error","原密码不正确");
+            s="student/resetPassword";
+        }
+        return s;
+    }
+    /*进入绑定邮箱界面*/
+    /*
+    * 几种情况
+    *   1.当用户已经绑定邮箱后，应该显示错误信息为“已绑定邮箱”（此为初步设定，后续可能会改成修改邮箱）
+    *   2.当用户没有绑定邮箱时，应该直接进入绑定邮箱界面
+    *       在绑定邮箱界面里，需要考虑的错误情况：
+    *           检查Apa和Stu表中的邮箱数据，查看是否有相同的邮箱数据，如果有相同的邮箱，则返回错误数据”当前邮箱已被绑定“
+    *           当检测通过后，进入确认验证码阶段，在这个界面应该有重复提交的机会（在登录的时候因为对POST和GET理解不够没有实现，后续整理
+    *           时应该进行修改）
+    *           绑定成功后返回主界面
+    * */
+    @GetMapping("/personal/bind/{id}")
+    public String toBind(@PathVariable("id") String id,
+                         Map<String,Object> map){
+        Student student=studentMapper.findById(id);
+        map.put("stu",student);
+        String s=null;
+        String t=student.getEmail();
+        if(t==null||t.trim().equals("")){
+            s="student/bindEmail";
+        }else {
+            map.put("error","已绑定邮箱");
+            s="student/personalMessage";
+        }
+        return s;
+    }
+    @PostMapping("/personal/bind/{id}")
+    public String BindEmail_1(@PathVariable("id") String id,
+                              @RequestParam("email") String email,
+                              Map<String,Object> map){
+        String s=null;
+        Student student=studentMapper.findById(id);
+        map.put("stu",student);
+        if (studentMapper.findEmail(email)==null&&apartmentMapper.findEmail(email)==null){
+            String code=demo.email(email);
+            map.put("code",code);
+            map.put("email",email);
+            s="student/bindEmail_2";
+        }else {
+            map.put("error","当前邮箱已被绑定");
+            s="student/bindEmail";
+        }
+        return s;
+    }
+    /*确认验证码*/
+    @PostMapping("/personal/bind/{id}/{code}/{email}")
+    public String BindEmail_2(@PathVariable("id") String id,
+                              @PathVariable("code") String code,
+                              @PathVariable("email") String email,
+                              @RequestParam("email_code") String email_code,
+                              Map<String,Object> map){
+        String s=null;
+        Student student=studentMapper.findById(id);
+        map.put("stu",student);
+        if (email_code.equals(code)){
+            studentMapper.setEmail(id,email);
+            s="student/personalMessage";
+        }else {
+            map.put("error","您输入的验证码不正确");
+            map.put("code",code);
+            map.put("email",email);
+            s="student/bindEmail_2";
+        }
+        return s;
+    }
+
 }

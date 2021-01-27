@@ -8,6 +8,8 @@ import java.util.List;
 @Repository
 public interface StudentMapper {
     public Student findById(String id);
+    public Student findEmail(String email);
+    public void setEmail(String id,String email);
     public void setNewPassword(String id,String password);
     public List<Student> findByLocation(String location);
     public void updateState(String id,String state);

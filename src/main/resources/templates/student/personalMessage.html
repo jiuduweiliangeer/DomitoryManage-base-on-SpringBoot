@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>layout 后台大布局 - Layui</title>
+
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" href="../src/css/layui.css">
+    <link th:href="@{/asserts/css/bootstrap.min.css}" href="../../static/asserts/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/asserts/css/dashboard.css}" href="../../static/asserts/css/dashboard.css" rel="stylesheet">
+
+
+    <!-- Custom styles for this template -->
+    <link th:href="@{/asserts/css/dashboard.css}" href="../../static/asserts/css/dashboard.css" rel="stylesheet">
+
+    <script th:src="@{/layui/layui.js}" src="../src/layui.js"></script>
+
+</head>
+<body>
+<div class="layui-layout layui-layout-admin">
+    <div th:replace="~{commons/common::topbar(clock='5',id=${stu.getStu_id()})}"></div>
+    <div th:replace="~{commons/common::siderbar(activeURL='personalMessage',id=${stu.getStu_id()})}"></div>
+    //内容主体
+    <div class="layui-body">
+
+        <div class="layui-container" style="margin-left: 550px;margin-top: 75px">
+            <form class="layui-form" action="">
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">学号:</label>
+                    <div class="layui-input-inline">
+                        <label class="layui-form-label" th:text="${stu.stu_id}">学号</label>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">姓名:</label>
+                    <div class="layui-input-inline">
+                        <label class="layui-form-label" th:text="${stu.username}">姓名</label>
+                    </div>
+                </div>
+
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">性别:</label>
+                    <div class="layui-input-inline">
+                        <label class="layui-form-label" th:text="${stu.sex}">性别</label>
+                    </div>
+                </div>
+
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">年级:</label>
+                    <div class="layui-input-inline">
+                        <label class="layui-form-label" th:text="${stu.grade}">年级</label>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">班级:</label>
+                    <div class="layui-input-inline">
+                        <label class="layui-form-label" th:text="${stu.number}">班级</label>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">专业:</label>
+                    <div class="layui-input-inline">
+                        <label class="layui-form-label" th:text="${stu.major}">专业</label>
+
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">宿舍:</label>
+                    <div class="layui-input-inline">
+                        <label class="layui-form-label" th:text="${stu.location}">宿舍</label>
+
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">邮箱:</label>
+                    <div class="layui-input-inline">
+                        <label class="layui-form-label" th:text="${stu.email}">邮箱</label>
+
+                    </div>
+                </div>
+                <span th:text="${error}" style="margin-left: 75px;color: red"></span>
+                <div class="layui-form-item">
+                    <div class="layui-input-block"style="margin-left: 10px">
+                        <a class="layui-btn layui-btn-normal" th:href="@{/personal/reset/{id}(id=${stu.stu_id})}">修改密码</a>
+                        <a class="layui-btn layui-btn-warm" th:href="@{/personal/bind/{id}(id=${stu.stu_id})}">绑定邮箱</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+
+
+
+
+</div>
+<script>
+/*    layui.use(['element','form'],function () {
+        var element =  layui.element;
+        var form = layui.form;
+    })*/
+</script>
+
+
+
+
+</body>
+</html>
