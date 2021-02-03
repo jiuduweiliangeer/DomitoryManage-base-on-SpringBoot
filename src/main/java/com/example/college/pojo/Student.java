@@ -14,6 +14,7 @@ public class Student {
     private String state;
     private String location;
     private String email;
+
     public Student(){
 
     }

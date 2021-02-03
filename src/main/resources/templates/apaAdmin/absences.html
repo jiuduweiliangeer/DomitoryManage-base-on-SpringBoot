@@ -18,10 +18,12 @@
             margin-bottom: 50px;
         }
 
-
+        #input_2{
+            margin-left: 50px;
+        }
 
         #btn_demo{
-            margin-left: 30px;
+            margin-left: 50px;
         }
 
     </style>
@@ -31,12 +33,12 @@
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <!--头部-->
-    <div th:replace="~{commons/common_apa::topbar(clock='2',id=${apa.id})}"></div>
+    <div th:replace="~{commons/common_apa::topbar}"></div>
 
 
 
     <!--侧边栏-->
-    <div th:replace="~{commons/common_apa::siderbar(activeURL='studentMessage',id=${apa.id})}"></div>
+    <div th:replace="~{commons/common_apa::siderbar(activeURL='absences')}"></div>
 
 
     <!-- 内容主体区域 -->
@@ -44,20 +46,17 @@
     <div class="layui-body" style="padding-top: 50px">
         <div class="layui-container">
             <div class="layui-main">
-                <form class="form-inline">
-
-
-                    <a id="btn_demo" th:href="@{/apaStudentMessage/addStudent/{id}(id=${apa.id})}" href="" class="btn layui-btn-normal">添加学生</a>
-
-                    <div class="form-group" id="input_1" style="margin-left: 20px">
+                <form style="padding-left: 30px" class="form-inline">
+                    <div class="form-group" id="input_1">
                         <label for="exampleInputName2">请输入: </label>
                         <input style="margin-left: 10px" type="text" class="form-control" id="exampleInputName2" placeholder="请输入xxx">
                     </div>
-                    <div class="form-group" id="input_2"style="margin-left: 10px">
+                    <div class="form-group" id="input_2">
                         <label for="exampleInputEmail2">请输入: </label>
                         <input style="margin-left: 10px" type="text" class="form-control" id="exampleInputEmail2" placeholder="请输入xxx">
                     </div>
-                    <button type="submit"  class="btn btn-success" style="margin-left: 10px">搜索</button>
+
+                    <button id="btn_demo" type="submit" class="btn btn-primary">查  询</button>
 
 
                 </form>
@@ -65,40 +64,30 @@
                 <br>
 
                 <div class="table-responsive" style="padding-left: 30px">
-                    <table id="table1" class="table table-striped table-sm" >
+                    <table id="table1" class="table table-striped table-sm">
                         <thead>
                         <tr>
                             <th>学号</th>
                             <th>姓名</th>
+                            <th>日期</th>
                             <th>宿舍</th>
-                            <th>性别</th>
-                            <th>年级</th>
-                            <th>班级</th>
-                            <th>邮箱</th>
-                            <th>专业</th>
-                            <th>状态</th>
                             <th>操作</th>
+
                         </tr>
                         </thead>
                         <tbody>
 
-                        <tr th:each="student:${students}">
-                            <td th:text="${student.stu_id}"></td>
-                            <td th:text="${student.username}"></td>
-                            <td th:text="${student.location}"></td>
-                            <td th:text="${student.sex}"></td>
-                            <td th:text="${student.grade}"></td>
-                            <td th:text="${student.number}"></td>
-                            <td th:text="${student.email}"></td>
-                            <td th:text="${student.major}"></td>
-                            <td th:text="${student.state}"></td>
+                        <tr>
+                            <td th:text="1"></td>
+                            <td th:text="2"></td>
+                            <td th:text="3"></td>
+                            <td th:text="4"></td>
 
                             <td>
                                 <a class="btn btn-sm btn-danger">删除</a>
                             </td>
                         </tr>
                         </tbody>
-
                     </table>
                     <br>
 

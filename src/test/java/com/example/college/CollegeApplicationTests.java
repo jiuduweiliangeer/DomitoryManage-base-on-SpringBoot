@@ -6,6 +6,7 @@ import com.example.college.mapper.Leave_stuMapper;
 import com.example.college.mapper.StudentMapper;
 import com.example.college.pojo.Clock;
 import com.example.college.pojo.Leave_stu;
+import com.example.college.pojo.Student;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -70,5 +71,11 @@ Leave_stuMapper leaveStuMapper;
 //        impairMapper.insertImpair("1","2","dw",format.parse(format.format(date)),"d","d","2");
         //      List<Impair> impairs=impairMapper.findByID("1");
         System.out.println(leaves.toString());
+    }
+    @Test
+    public void testLike(){
+        String building="15-";
+        List<Student> students=studentMapper.selectByBuildingLike(building);
+        System.out.println(students.toString());
     }
 }

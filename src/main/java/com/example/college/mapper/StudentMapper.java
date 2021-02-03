@@ -15,4 +15,5 @@ public interface StudentMapper {
     public void updateState(String id,String state);
     public List<Student> selectRelative(String major,String grade,String number);
     public List<Student> selectByRelative(String major,String grade,String number,String sex,String username,String stu_id);
+    public List<Student> selectByBuildingLike(String building);
 }

@@ -199,6 +199,10 @@ public class StudentController {
                               @RequestParam("reason") String reason,
                               Map<String,Object> map) throws ParseException {
         Student student=studentMapper.findById(id);
+        /*
+        * 此处还需要做一个判定，判断开始时间和结束时间的先后，暂未做，前端后续工程完工后，进行补充
+        * 前端的数据传输过来应该是yyyy/MM/DDTHH:mm,String类型，所以使用String类型下的replace来修改成String类型的设定格式的Date模板，然后进行转换
+        * */
         Date date1= format1.parse(now_time.replace("T"," ")+":00");
         Date date2= format1.parse(end_time.replace("T"," ")+":00");
         leaveStuMapper.insertLeave(id,student.getUsername(),student.getLocation(),reason,date1,date2,"待处理");

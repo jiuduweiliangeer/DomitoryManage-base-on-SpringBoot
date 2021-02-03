@@ -9,14 +9,10 @@
                 <li class="layui-nav-item">
                     <a href="javascript:;">
                         <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
-                        用户名
+                        [[${id}]]
                     </a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="">基本资料</a></dd>
-                        <dd><a href="">安全设置</a></dd>
-                    </dl>
                 </li>
-                <li class="layui-nav-item"><a href="">退了</a></li>
+                <li class="layui-nav-item"><a th:href="@{/backLogin}">退了</a></li>
             </ul>
         </div>
 
@@ -25,10 +21,12 @@
                 <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
                 <ul class="layui-nav layui-nav-tree"  lay-filter="test">
 
-                    <li class="layui-nav-item layui-nav-itemed">
-                        <a th:href="@{/apaAdmin/Main}" href="javascript:;">宿舍管理</a>
+                    <li th:class="${activeURL=='apaMain'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
+                        <a th:href="@{/apaMain/{id}(id=${id})}" href="javascript:;">宿舍管理</a>
                     </li>
-                    <li class="layui-nav-item"><a th:href="@{/apaAdmin/studentMessage}" href="">学生信息</a></li>
+                    <li th:class="${activeURL=='studentMessage'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
+                        <a th:href="@{/apaStudentMessage/{id}(id=${id})}" href="">学生信息</a>
+                    </li>
                     <li class="layui-nav-item"><a th:href="@{/apaAdmin/absences}" href="">缺勤情况</a></li>
                     <li class="layui-nav-item"><a th:href="@{/apaAdmin/declareProcessing}" href="">申报处理</a></li>
                     <li class="layui-nav-item"><a th:href="@{/apaAdmin/leaveProcessing}" href="">请假处理</a></li>

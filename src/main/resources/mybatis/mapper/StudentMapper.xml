@@ -48,4 +48,7 @@
             AND stu_id=#{stu_id}
         </if>
     </select>
+    <select id="selectByBuildingLike" resultType="com.example.college.pojo.Student">
+        SELECT * FROM student WHERE location LIKE concat('%','${building}','%')
+    </select>
 </mapper>

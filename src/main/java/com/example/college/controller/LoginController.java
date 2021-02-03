@@ -2,6 +2,7 @@ package com.example.college.controller;
 
 import com.example.college.mapper.*;
 import com.example.college.pojo.Apartment;
+import com.example.college.pojo.Location;
 import com.example.college.pojo.School;
 import com.example.college.pojo.Student;
 import com.example.college.sendemail.Demo;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +32,8 @@ public class LoginController {
     SchoolMapper schoolMapper;
     @Autowired
     ClockMapper clockMapper;
+    @Autowired
+    LocationMapper locationMapper;
     @Autowired
     Demo demo;
     /*设置初始页面*/
@@ -124,9 +128,11 @@ public class LoginController {
                 if (apartment!=null){
                     String password1=apartment.getPassword();
                     if (password.equals(password1)){
-                        map.put("id",id);
+                        List<Location> locations=locationMapper.findByBuilding(apartment.getApartment());
+                        map.put("locations",locations);
+                        map.put("apa",apartment);
                         //根据前端页面修改
-                        s="success";
+                        s="apaAdmin/apaMain";
                     }else{
                         map.put("error","您输入的密码错误");
                         s="login";
