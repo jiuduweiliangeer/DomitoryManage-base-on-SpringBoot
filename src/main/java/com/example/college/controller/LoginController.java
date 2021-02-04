@@ -34,6 +34,8 @@ public class LoginController {
     @Autowired
     LocationMapper locationMapper;
     @Autowired
+    AbsenceMapper absenceMapper;
+    @Autowired
     Demo demo;
     /*设置初始页面*/
     @GetMapping("/")
@@ -53,7 +55,7 @@ public class LoginController {
         SimpleDateFormat format2=new SimpleDateFormat("yyyy-MM-dd");
         Date dateNow=format1.parse(format1.format(date));//转换之后是String类型
         String dateBeginS=format2.format(date)+" 12:00:00";//String 拼接
-        String dateEndS=format2.format(date)+" 23:30:00";
+        String dateEndS=format2.format(date)+" 16:30:00";
         Date dateBegin=format1.parse(dateBeginS);
         Date dateEnd=format1.parse(dateEndS);
         //每天更新一次打卡表，只有再这个时间段内打卡的才会记录进去
@@ -78,6 +80,7 @@ public class LoginController {
                         if (dateNow.before(dateBegin)||dateNow.after(dateEnd)){
                             if (state.equals("在校（未打卡）")){
                                 studentMapper.updateState(id,"缺勤");
+                                absenceMapper.insertAbsence(id,student.getUsername(),dateNow,student.getLocation(),"未上报");
                                 //此处应该上报至缺勤表(缺勤人，缺勤时间)，暂时未做，最后加上
                                 //记录：本系统设定的一天时间为前一天12：00-后一天12：00，也就是说，在12：00前记录的缺勤记录和前一天23：30之后记录的缺勤记录为同一天
                                 /*

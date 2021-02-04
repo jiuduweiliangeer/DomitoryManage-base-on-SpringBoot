@@ -34,6 +34,8 @@ public class StudentController {
     @Autowired
     ApartmentMapper apartmentMapper;
     @Autowired
+    AbsenceMapper absenceMapper;
+    @Autowired
     Demo demo;
     SimpleDateFormat format1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     SimpleDateFormat format2=new SimpleDateFormat("yyyy-MM-dd");
@@ -77,7 +79,7 @@ public class StudentController {
         /*判定时间,12:00-12:00+1为一个周期*/
         Date dateNow=format1.parse(format1.format(date));//转换之后是String类型
         String dateBeginS=format2.format(date)+" 12:00:00";//String 拼接
-        String dateEndS=format2.format(date)+" 23:30:00";
+        String dateEndS=format2.format(date)+" 16:30:00";
         Date dateBegin=format1.parse(dateBeginS);
         Date dateEnd=format1.parse(dateEndS);
         Student student=studentMapper.findById(id);
@@ -91,6 +93,7 @@ public class StudentController {
         if (dateNow.before(dateBegin)||dateNow.after(dateEnd)){
             if (state.equals("在校（未打卡）")){
                 studentMapper.updateState(id,"缺勤");
+                absenceMapper.insertAbsence(id,student.getUsername(),dateNow,student.getLocation(),"未上报");
                 //此处应该上报至缺勤表(缺勤人，缺勤时间)，暂时未做，最后加上
             }
         }else if (dateNow.after(dateBegin)&&dateNow.before(dateEnd)){

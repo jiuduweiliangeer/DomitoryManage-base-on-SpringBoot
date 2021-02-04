@@ -1,6 +1,7 @@
 package com.example.college.controller;
 
 import com.example.college.mapper.*;
+import com.example.college.pojo.Absence;
 import com.example.college.pojo.Apartment;
 import com.example.college.pojo.Location;
 import com.example.college.pojo.Student;
@@ -10,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +32,13 @@ public class ApartmentController {
     ApartmentMapper apartmentMapper;
     @Autowired
     LocationMapper locationMapper;
+    @Autowired
+    AbsenceMapper absenceMapper;
+    Date date=new Date();
+    SimpleDateFormat format1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat format2=new SimpleDateFormat("yyyy-MM-dd");
+    String dateBeginS=format2.format(date)+" 12:00:00";//String 拼接
+    String dateEndS=format2.format(date)+" 16:30:00";
     /*进入主页面*/
     @GetMapping("/apaMain/{id}")
     public String toApaMain(@PathVariable("id") String id,
@@ -207,5 +218,93 @@ public class ApartmentController {
             }
         }
         return s;
+    }
+    /*删除学生*/
+    @GetMapping("/apaStudentMessage/delete/{id}/{stu_id}")
+    public String DeleteStudent(@PathVariable("id") String id,
+                                @PathVariable("stu_id") String stu_id,
+                                Map<String,Object> map){
+        Apartment apartment=apartmentMapper.findById(id);
+        String building=apartment.getApartment()+"-";
+        studentMapper.deleteStudent(stu_id);
+        List<Student> students=studentMapper.selectByBuildingLike(building);
+        map.put("apa",apartment);
+        map.put("students",students);
+        return "apaAdmin/studentMessage";
+    }
+    /*进入缺勤页面*/
+    @GetMapping("/absences/{id}")
+    public String toAbsences(@PathVariable("id") String id,
+                             Map<String,Object> map){
+        Apartment apartment=apartmentMapper.findById(id);
+        List<Absence> absences=absenceMapper.selectByBuildingLike(apartment.getApartment()+"-");
+        map.put("apa",apartment);
+        map.put("absences",absences);
+        return "apaAdmin/absences";
+    }
+    /*确认缺勤情况，此处为了防止学生未登录系统触发Controller而造成的缺勤未记录情况*/
+    @GetMapping("/absence/confirm/{id}")
+    public String confirmAbsence(@PathVariable("id") String id,
+                                 Map<String,Object> map) throws ParseException {
+        Date dateNow=format1.parse(format1.format(date));
+        Date dateBegin=format1.parse(dateBeginS);
+        Date dateEnd=format1.parse(dateEndS);
+        Apartment apartment=apartmentMapper.findById(id);
+        if (dateNow.after(dateBegin)&&dateNow.before(dateEnd)){
+            List<Absence> absences=absenceMapper.selectByBuildingLike(apartment.getApartment()+"-");
+            map.put("apa",apartment);
+            map.put("absences",absences);
+            map.put("error","不在确认时间内");
+        }else {
+            List<Student> students=studentMapper.selectByBuildingLike(apartment.getApartment()+"-");
+            /*没有数据的时候进行get和其他的复杂操作会导致报错，直接使用try catch捕获错误并抛出*/
+            try{
+                for(int i=0;i<students.size();i++){
+                    if (students.get(i).getState().equals("在校（未打卡）")){
+                        studentMapper.updateState(students.get(i).getStu_id(),"缺勤");
+                        absenceMapper.insertAbsence(students.get(i).getStu_id(),students.get(i).getUsername(),dateNow,students.get(i).getLocation(),"未上报");
+                    }
+                }
+                List<Absence> absences=absenceMapper.selectByBuildingLike(apartment.getApartment()+"-");
+                map.put("apa",apartment);
+                map.put("absences",absences);
+            }catch (Exception e){
+                List<Absence> absences=absenceMapper.selectByBuildingLike(apartment.getApartment()+"-");
+                map.put("apa",apartment);
+                map.put("absences",absences);
+                logger.info("没有未确认的学生");
+            }
+        }
+        return "apaAdmin/absences";
+    }
+    /*上报缺勤记录*/
+    @GetMapping("/absence/submit/{id}")
+    public String submitAbsence(@PathVariable("id") String id,
+                                Map<String,Object> map){
+        Apartment apartment=apartmentMapper.findById(id);
+        String state="已上报";
+        absenceMapper.updateAbsenceState(state,apartment.getApartment()+"-");
+        List<Absence> absences=absenceMapper.selectByBuildingLike(apartment.getApartment()+"-");
+        map.put("apa",apartment);
+        map.put("absences",absences);
+        return "apaAdmin/absences";
+    }
+    /*管理员查询缺勤情况*/
+    @PostMapping("/absence/{id}")
+    public String selectAbsence(@PathVariable("id") String id,
+                                @RequestParam("state") String state,
+                                @RequestParam("stu_id") String stu_id,
+                                Map<String,Object> map){
+        if(state==""){
+            state=null;
+        }
+        if (stu_id==""){
+            stu_id=null;
+        }
+        Apartment apartment=apartmentMapper.findById(id);
+        List<Absence> absences=absenceMapper.selectAbsenceLike(apartment.getApartment()+"-",state,stu_id);
+        map.put("apa",apartment);
+        map.put("absences",absences);
+        return "apaAdmin/absences";
     }
 }

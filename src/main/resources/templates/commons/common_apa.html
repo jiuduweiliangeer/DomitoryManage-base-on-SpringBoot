@@ -12,6 +12,8 @@
                         [[${id}]]
                     </a>
                 </li>
+                <li class="layui-nav-item"><a href="" th:if="${clock=='3'}" th:href="@{/absence/confirm/{id}(id=${id})}" >确认缺勤情况</a></li>
+                <li class="layui-nav-item"><a href="" th:if="${clock=='3'}" th:href="@{/absence/submit/{id}(id=${id})}" >上报缺勤情况</a></li>
                 <li class="layui-nav-item"><a th:href="@{/backLogin}">退了</a></li>
             </ul>
         </div>
@@ -27,7 +29,9 @@
                     <li th:class="${activeURL=='studentMessage'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
                         <a th:href="@{/apaStudentMessage/{id}(id=${id})}" href="">学生信息</a>
                     </li>
-                    <li class="layui-nav-item"><a th:href="@{/apaAdmin/absences}" href="">缺勤情况</a></li>
+                    <li th:class="${activeURL=='absences'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
+                        <a th:href="@{/absences/{id}(id=${id})}" href="">缺勤情况</a>
+                    </li>
                     <li class="layui-nav-item"><a th:href="@{/apaAdmin/declareProcessing}" href="">申报处理</a></li>
                     <li class="layui-nav-item"><a th:href="@{/apaAdmin/leaveProcessing}" href="">请假处理</a></li>
                     <li class="layui-nav-item"><a th:href="@{/apaAdmin/feedbackProcessing}" href="">反馈处理</a></li>

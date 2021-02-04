@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.college.mapper.AbsenceMapper">
+    <insert id="insertAbsence">
+        INSERT INTO absence(id,name,date_absence,location,state)
+        VALUES (#{id},#{name},#{date_absence},#{location},#{state})
+    </insert>
+    <select id="selectByBuildingLike" resultType="com.example.college.pojo.Absence">
+        SELECT * FROM absence WHERE location LIKE concat('%','${building}','%')
+    </select>
+    <update id="updateAbsenceState">
+        UPDATE absence SET state=#{state} WHERE location LIKE concat('%','${building}','%')
+    </update>
+    <select id="selectAbsenceLike" resultType="com.example.college.pojo.Absence">
+        SELECT * FROM absence WHERE location LIKE concat('%','${building}','%')
+        <if test="state!=null">
+            AND state=#{state}
+            <if test="id!=null">
+                AND id=#{id}
+            </if>
+        </if>
+        <if test="id!=null">
+            AND id=#{id}
+        </if>
+    </select>
+</mapper>

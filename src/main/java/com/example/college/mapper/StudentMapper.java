@@ -11,6 +11,8 @@ public interface StudentMapper {
     public void InsertStudent(String stu_id,String username,String password,String sex,String grade,String number,String major,String state,String location);
     /*通过id查找学生，多处使用*/
     public Student findById(String id);
+    /*删除学生，用于管理员管理学生*/
+    public void deleteStudent(String id);
     /*通过email查找学生，用于绑定邮箱时查询内容*/
     public Student findEmail(String email);
     /*设置邮箱*/

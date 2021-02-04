@@ -80,4 +80,7 @@
         INSERT INTO student(stu_id,username,password,sex,grade,number,major,state,location)
         VALUES (#{stu_id},#{username},#{password},#{sex},#{grade},#{number},#{major},#{state},#{location})
     </insert>
+    <delete id="deleteStudent">
+        DELETE FROM student WHERE stu_id=#{stu_id}
+    </delete>
 </mapper>
