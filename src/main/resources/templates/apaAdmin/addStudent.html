@@ -21,12 +21,12 @@
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <!--头部-->
-    <div th:replace="~{commons/common_apa::topbar}"></div>
+    <div th:replace="~{commons/common_apa::topbar(clock='2',id=${apa.id})}"></div>
 
 
 
     <!--侧边栏-->
-    <div th:replace="~{commons/common_apa::siderbar(activeURL='studentMessage')}"></div>
+    <div th:replace="~{commons/common_apa::siderbar(activeURL='studentMessage',id=${apa.id})}"></div>
 
 
     <!-- 内容主体区域 -->
@@ -34,17 +34,17 @@
     <div class="layui-body" style="padding-top: 50px">
         <div class="layui-container" style="margin-left: 100px">
             <div class="layui-main">
-                <form action="">
+                <form th:action="@{/apaStudentMessage/addStudent/{id}(id=${apa.id})}" method="post">
                     <div class="form-group row">
                         <label for="input_1" class="col-sm-2 control-label" style="margin-top: 5px;text-align: center">学号</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="input_1" placeholder="id">
+                            <input required="required" th:name="stu_id" type="text" class="form-control" id="input_1" placeholder="id">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="input_2" class="col-sm-2 control-label" style="margin-top: 6px;text-align: center">姓名</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="input_2" placeholder="username">
+                            <input required="required" th:name="username" type="text" class="form-control" id="input_2" placeholder="username">
                         </div>
                     </div>
                     <!--初始密码设定为123456-->
@@ -57,32 +57,35 @@
                     <div class="form-group row">
                         <label for="input_4" class="col-sm-2 control-label" style="margin-top: 7px;text-align: center">性别</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="input_4" placeholder="sex">
+                            <input required="required" th:name="sex" type="text" class="form-control" id="input_4" placeholder="sex">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="input_5" class="col-sm-2 control-label" style="margin-top: 7px;text-align: center">年级</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="input_5" placeholder="grade">
+                            <input required="required" th:name="grade" type="text" class="form-control" id="input_5" placeholder="grade">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="input_6" class="col-sm-2 control-label" style="margin-top: 7px;text-align: center">班级</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="input_6" placeholder="number">
+                            <input required="required" th:name="number" type="text" class="form-control" id="input_6" placeholder="number">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="input_7" class="col-sm-2 control-label" style="margin-top: 7px;text-align: center">专业</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="input_7" placeholder="major">
+                            <input required="required" th:name="major" type="text" class="form-control" id="input_7" placeholder="major">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="input_8" class="col-sm-2 control-label" style="margin-top: 7px;text-align: center">宿舍</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="input_8" placeholder="请填写宿舍号">
+                            <input required="required" th:name="location" type="text" class="form-control" id="input_8" placeholder="请填写宿舍号(XXX)">
                         </div>
+                    </div>
+                    <div class="float-right">
+                        <label th:text="${error}" style="color: red"></label>
                     </div>
                     <div class="float-right">
                         <button type="submit" class="btn btn-primary">添 加</button>

@@ -46,10 +46,10 @@
     <div class="layui-body" style="padding-top: 50px">
         <div class="layui-container">
             <div class="layui-main">
-                <form style="padding-left: 30px" class="form-inline">
+                <form style="padding-left: 30px" class="form-inline" th:action="@{/apaMain/SelectLocation/{id}(id=${apa.id})}" method="post">
                     <div class="form-group">
                         <lable><b>学生情况 : </b></lable>
-                        <select class="form-control" style="margin-left: 10px" name="sex">
+                        <select class="form-control" style="margin-left: 10px" name="is_home">
                             <option th:value="null" th:text="空"></option>
                             <option th:value="在寝" th:text="在寝"></option>
                             <option th:value="有缺勤" th:text="有缺勤"></option>
@@ -57,7 +57,7 @@
                     </div>
                     <div class="form-group" style="margin-left: 10px">
                         <lable><b>状态 : </b></lable>
-                        <select class="form-control" style="margin-left: 10px" name="sex">
+                        <select class="form-control" style="margin-left: 10px" name="state">
                             <option th:value="null" th:text="空"></option>
                             <option th:value="安全" th:text="安全"></option>
                             <option th:value="危险" th:text="危险"></option>
@@ -65,7 +65,7 @@
                     </div>
                     <div class="form-group" id="input_1" style="margin-left: 10px">
                         <b><label for="exampleInputName2">请输入宿舍: </label></b>
-                        <input style="margin-left: 10px" type="text" class="form-control" id="exampleInputName2" placeholder="请输入xxx">
+                        <input style="margin-left: 10px" th:name="floor" type="text" class="form-control" id="exampleInputName2" placeholder="请输入xxx">
                     </div>
 
                     <button id="btn_demo" type="submit" class="btn btn-primary">查  询</button>
@@ -88,12 +88,13 @@
                         <tbody>
                         <tr th:each="location:${locations}">
                             <td th:text="${location.building}"></td>
-                            <td th:text="${location.getFloor()}"></td>
+                            <td th:text="${location.floor}"></td>
                             <td th:text="${location.is_home}"></td>
                             <td th:text="${location.state}"></td>
                             <td>
                                 <a class="btn btn-sm btn-warning" th:href="@{/apaMain/examine/{id}/{floor}(id=${apa.id},floor=${location.floor})}">查看详情</a>
-                                <a class="btn btn-sm btn-danger" th:href="@{/apaMain/sign/{id}/{floor}(id=${apa.id},floor=${location.floor})}">标记宿舍</a>
+                                <!--内部判断修改展示内容和URL以及样式-->
+                                <a th:class="${location.state}=='安全'?'btn btn-sm btn-danger':'btn btn-sm btn-success'" th:href="${location.state}=='安全'?@{/apaMain/sign/{id}/{floor}(id=${apa.id},floor=${location.floor})}:@{/apaMain/resign/{id}/{floor}(id=${apa.id},floor=${location.floor})}" th:text="${location.state}=='安全'?'标记宿舍':'取消标记'"></a>
                             </td>
                         </tr>
                         </tbody>

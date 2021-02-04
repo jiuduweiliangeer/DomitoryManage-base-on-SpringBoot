@@ -6,4 +6,34 @@
     <select id="findByBuilding" resultType="com.example.college.pojo.Location">
         SELECT * FROM location WHERE building=#{building}
     </select>
+    <select id="SelectLocation" resultType="com.example.college.pojo.Location">
+        SELECT * FROM  location WHERE building=#{building}
+        <if test="is_home!=null">
+            AND is_home=#{is_home}
+            <if test="state!=null">
+                AND state=#{state}
+                <if test="floor!=null">
+                    AND floor=#{floor}
+                </if>
+            </if>
+            <if test="floor!=null">
+                AND floor=#{floor}
+            </if>
+        </if>
+        <if test="state!=null">
+            AND state=#{state}
+            <if test="floor!=null">
+               AND floor=#{floor}
+            </if>
+        </if>
+        <if test="floor!=null">
+            AND floor=#{floor}
+        </if>
+    </select>
+    <update id="UpdateIs_home">
+        UPDATE location SET is_home=#{is_home} WHERE building=#{building} AND floor=#{floor}
+    </update>
+    <update id="UpdateState">
+        UPDATE location SET state=#{state} WHERE building=#{building} AND floor=#{floor}
+    </update>
 </mapper>

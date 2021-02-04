@@ -51,4 +51,33 @@
     <select id="selectByBuildingLike" resultType="com.example.college.pojo.Student">
         SELECT * FROM student WHERE location LIKE concat('%','${building}','%')
     </select>
+    <!--多重模糊查询，可以在已经查询结束的模糊结果里面再次进行模糊查询，具体使用如下-->
+    <select id="selectByApartment" resultType="com.example.college.pojo.Student">
+        SELECT * FROM student WHERE location LIKE concat('%','${building}','%')
+        <if test="grade!=null">
+            AND grade=#{grade}
+            <if test="location!=null">
+               AND location LIKE concat('%','${location}','%')
+               <if test="stu_id!=null">
+                   AND stu_id=#{stu_id}
+               </if>
+            </if>
+            <if test="stu_id!=null">
+                AND stu_id=#{stu_id}
+            </if>
+        </if>
+        <if test="location!=null">
+            AND location LIKE concat('%','${location}','%')
+            <if test="stu_id!=null">
+                AND stu_id=#{stu_id}
+            </if>
+        </if>
+        <if test="stu_id!=null">
+            AND stu_id=#{stu_id}
+        </if>
+    </select>
+    <insert id="InsertStudent">
+        INSERT INTO student(stu_id,username,password,sex,grade,number,major,state,location)
+        VALUES (#{stu_id},#{username},#{password},#{sex},#{grade},#{number},#{major},#{state},#{location})
+    </insert>
 </mapper>

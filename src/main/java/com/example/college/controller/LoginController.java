@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -128,6 +127,20 @@ public class LoginController {
                 if (apartment!=null){
                     String password1=apartment.getPassword();
                     if (password.equals(password1)){
+                        /*根据模糊查询出来的本栋学生数据来判断是否有缺勤，如果有则讲学生所在宿舍的宿舍学生情况改为有缺勤*/
+                        List<Student> students=studentMapper.selectByBuildingLike(apartment.getApartment()+"-");
+                        try {
+                            for (int i=0;i<students.size();i++){
+                                if (students.get(i).getState().equals("缺勤")){
+                                    String[] split=students.get(i).getLocation().split("-");
+                                    String floor=split[1];
+                                    String is_home="有缺勤";
+                                    locationMapper.UpdateIs_home(apartment.getApartment(),floor,is_home);
+                                }
+                            }
+                        }catch (Exception e){
+                            logger.info("本楼栋没有数据");
+                        }
                         List<Location> locations=locationMapper.findByBuilding(apartment.getApartment());
                         map.put("locations",locations);
                         map.put("apa",apartment);
