@@ -46,7 +46,6 @@ public class ApartmentController {
         Apartment apartment=apartmentMapper.findById(id);
         /*根据模糊查询出来的本栋学生数据来判断是否有缺勤，如果有则讲学生所在宿舍的宿舍学生情况改为有缺勤*/
         List<Student> students=studentMapper.selectByBuildingLike(apartment.getApartment()+"-");
-        String is_home="在寝";
         /*两种判定方法，现在使用的是优化过的方法，
          * 未优化过的方法中，只能将有缺勤的寝室改成有缺勤状态，而不能改回，并且反复调用sql语句会造成冗余
          *                逻辑为：
@@ -66,6 +65,7 @@ public class ApartmentController {
             int in=0;
             int out=0;
             for (int i=0;i<students.size();i++){
+                String is_home="在寝";//每次进入循环的时候都需要设定is_home的默认值
                 /*if (students.get(i).getState().equals("缺勤")){
                     String[] split=students.get(i).getLocation().split("-");*//*将学生的楼栋和宿舍分离，方便后续查询*//*
                     String floor=split[1];*//*得到宿舍号*//*
