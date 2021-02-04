@@ -235,7 +235,7 @@ public class ApartmentController {
         }else {
             location=apartment.getApartment()+"-"+location;
             List<Student> students=studentMapper.findByLocation(location);
-            if (students.size()>4){
+            if (students.size()==4){
                 /*默认每个宿舍最多四个人*/
                 map.put("error","当前宿舍已经满员");
                 map.put("apa",apartment);
