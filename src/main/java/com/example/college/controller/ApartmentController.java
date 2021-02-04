@@ -46,13 +46,52 @@ public class ApartmentController {
         Apartment apartment=apartmentMapper.findById(id);
         /*根据模糊查询出来的本栋学生数据来判断是否有缺勤，如果有则讲学生所在宿舍的宿舍学生情况改为有缺勤*/
         List<Student> students=studentMapper.selectByBuildingLike(apartment.getApartment()+"-");
+        String is_home="在寝";
+        /*两种判定方法，现在使用的是优化过的方法，
+         * 未优化过的方法中，只能将有缺勤的寝室改成有缺勤状态，而不能改回，并且反复调用sql语句会造成冗余
+         *                逻辑为：
+         *                   循环以管理员管理楼栋字段为关键字段的模糊查询以后获得的集合，
+         *                   对集合中每一个数据的state进行判断，当state是缺勤状态时，将
+         *                   宿舍的状态修改为有缺勤
+         * 优化过的方法中，可以将有缺勤的寝室改成有缺勤状态，也可以将缺勤状态改回，将sql语句抽出，整个逻辑中实际只在需要使用
+         * sql改变的时候调用
+         *                逻辑为：
+         *                   循环以管理员管理楼栋字段为关键字段的模糊查询以后获得的集合，
+         *                   对集合中每一个数据的state进行判断，当state是在校（未打卡）
+         *                   状态时，获取当前学生的宿舍信息，并在学生表中查询宿舍中的其他
+         *                   学生信息，整合为一个集合，遍历这个集合，当集合中有缺勤状态的
+         *                   数据时，将宿舍的状态修改为有缺勤，当所有的数据的状态都为在校
+         *                   （未打卡）或者已打卡状态，则将宿舍状态修改为在寝*/
         try {
+            int in=0;
+            int out=0;
             for (int i=0;i<students.size();i++){
-                if (students.get(i).getState().equals("缺勤")){
-                    String[] split=students.get(i).getLocation().split("-");/*将学生的楼栋和宿舍分离，方便后续查询*/
-                    String floor=split[1];/*得到宿舍号*/
+                /*if (students.get(i).getState().equals("缺勤")){
+                    String[] split=students.get(i).getLocation().split("-");*//*将学生的楼栋和宿舍分离，方便后续查询*//*
+                    String floor=split[1];*//*得到宿舍号*//*
                     String is_home="有缺勤";
-                    /*进行修改，floor为分割后的学生宿舍号，用宿舍管理员的楼栋号和学生的宿舍号来进行修改和查询*/
+                    *//*进行修改，floor为分割后的学生宿舍号，用宿舍管理员的楼栋号和学生的宿舍号来进行修改和查询*//*
+                    locationMapper.UpdateIs_home(apartment.getApartment(),floor,is_home);
+                }*/
+                if (students.get(i).getState().equals("在校（未打卡）")||students.get(i).getState().equals("已打卡")){
+                    String[] split=students.get(i).getLocation().split("-");
+                    String floor=split[1];
+                    List<Student> studentsLocation=studentMapper.findByLocation(students.get(i).getLocation());
+                    for (int j=0;j<studentsLocation.size();j++){
+                        if (studentsLocation.get(j).getState().equals("缺勤")){
+                            is_home="有缺勤";
+                        }/*else if (is_home.equals("在寝")){
+                            *//*为什么要添加一个判断？
+                            * 如果得到的集合在校（未打卡）状态在后面，会直接进入else，
+                            * 如果没有这个判断，就会将is_home给设定为在寝状态，这样会
+                            * 导致无法正确的更改宿舍状态为有缺勤，
+                            * 因此，设置一个判定，只有当他本身就是在寝状态时，才可以进入这个判定
+                            * ps:is_home的默认值就是在寝，如果集合中的全部数据都不是缺勤状态，则
+                            * is_home不会变更，所以是否有必要加这个判定？当is_home的默认值直接设定为
+                            * 在寝状态，没有必要设定这个判定*//*
+                            is_home="在寝";
+                        }*/
+                    }
                     locationMapper.UpdateIs_home(apartment.getApartment(),floor,is_home);
                 }
             }

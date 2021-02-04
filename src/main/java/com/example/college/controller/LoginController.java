@@ -132,12 +132,41 @@ public class LoginController {
                     if (password.equals(password1)){
                         /*根据模糊查询出来的本栋学生数据来判断是否有缺勤，如果有则讲学生所在宿舍的宿舍学生情况改为有缺勤*/
                         List<Student> students=studentMapper.selectByBuildingLike(apartment.getApartment()+"-");
+                        String is_home="在寝";
                         try {
                             for (int i=0;i<students.size();i++){
-                                if (students.get(i).getState().equals("缺勤")){
+                                /*两种判定方法，现在使用的是优化过的方法，
+                                * 未优化过的方法中，只能将有缺勤的寝室改成有缺勤状态，而不能改回，并且反复调用sql语句会造成冗余
+                                *                逻辑为：
+                                *                   循环以管理员管理楼栋字段为关键字段的模糊查询以后获得的集合，
+                                *                   对集合中每一个数据的state进行判断，当state是缺勤状态时，将
+                                *                   宿舍的状态修改为有缺勤
+                                * 优化过的方法中，可以将有缺勤的寝室改成有缺勤状态，也可以将缺勤状态改回，将sql语句抽出，整个逻辑中实际只在需要使用
+                                * sql改变的时候调用
+                                *                逻辑为：
+                                *                   循环以管理员管理楼栋字段为关键字段的模糊查询以后获得的集合，
+                                *                   对集合中每一个数据的state进行判断，当state是在校（未打卡）
+                                *                   状态时，获取当前学生的宿舍信息，并在学生表中查询宿舍中的其他
+                                *                   学生信息，整合为一个集合，遍历这个集合，当集合中有缺勤状态的
+                                *                   数据时，将宿舍的状态修改为有缺勤，当所有的数据的状态都为在校
+                                *                   （未打卡）或者已打卡状态，则将宿舍状态修改为在寝*/
+           /*                     if (students.get(i).getState().equals("缺勤")){
                                     String[] split=students.get(i).getLocation().split("-");
                                     String floor=split[1];
                                     String is_home="有缺勤";
+                                    locationMapper.UpdateIs_home(apartment.getApartment(),floor,is_home);
+                                }*/
+                                if (students.get(i).getState().equals("在校（未打卡）")||students.get(i).getState().equals("已打卡")){
+                                    String[] split=students.get(i).getLocation().split("-");
+                                    String floor=split[1];
+                                    List<Student> studentsLocation=studentMapper.findByLocation(students.get(i).getLocation());
+                                    for (int j=0;j<studentsLocation.size();j++){
+                                        if (studentsLocation.get(j).getState().equals("缺勤")){
+                                            is_home="有缺勤";
+                                        }/*else {
+                                            is_home="在寝";
+                                        }*/
+                                    }
                                     locationMapper.UpdateIs_home(apartment.getApartment(),floor,is_home);
                                 }
                             }
