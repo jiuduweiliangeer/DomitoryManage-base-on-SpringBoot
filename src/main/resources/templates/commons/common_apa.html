@@ -32,10 +32,21 @@
                     <li th:class="${activeURL=='absences'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
                         <a th:href="@{/absences/{id}(id=${id})}" href="">缺勤情况</a>
                     </li>
-                    <li class="layui-nav-item"><a th:href="@{/apaAdmin/declareProcessing}" href="">申报处理</a></li>
-                    <li class="layui-nav-item"><a th:href="@{/apaAdmin/leaveProcessing}" href="">请假处理</a></li>
-                    <li class="layui-nav-item"><a th:href="@{/apaAdmin/feedbackProcessing}" href="">反馈处理</a></li>
-                    <li class="layui-nav-item"><a th:href="@{/apaAdmin/historyRecords}" href="">历史记录</a></li>
+                    <li th:class="${activeURL=='declareProcessing'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
+                        <a th:href="@{/declareProcessing/{id}(id=${id})}" href="">申报处理</a>
+                    </li>
+                    <li th:class="${activeURL=='leaveProcessing'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
+                        <a th:href="@{/leaveProcessing/{id}(id=${id})}" href="">请假处理</a>
+                    </li>
+                    <li th:class="${activeURL=='feedbackProcessing'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
+                        <a th:href="@{/feedbackProcessing/{id}(id=${id})}" href="">反馈处理</a>
+                    </li>
+                    <li th:class="${activeURL=='personalMessage'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
+                        <a th:href="@{/personalApaMessage/{id}(id=${id})}" href="">个人信息</a>
+                    </li>
+                    <li th:class="${activeURL=='historyRecords'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
+                        <a th:href="@{/historyRecords/{id}(id=${id})}" href="">历史记录</a>
+                    </li>
                 </ul>
             </div>
         </div>

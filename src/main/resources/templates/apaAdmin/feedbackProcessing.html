@@ -33,12 +33,12 @@
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <!--头部-->
-    <div th:replace="~{commons/common_apa::topbar}"></div>
+    <div th:replace="~{commons/common_apa::topbar(clock='6',id=${apa.id})}"></div>
 
 
 
     <!--侧边栏-->
-    <div th:replace="~{commons/common_apa::siderbar(activeURL='feedbackProcessing')}"></div>
+    <div th:replace="~{commons/common_apa::siderbar(activeURL='feedbackProcessing',id=${apa.id})}"></div>
 
 
     <!-- 内容主体区域 -->

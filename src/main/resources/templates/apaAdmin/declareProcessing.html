@@ -33,12 +33,12 @@
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <!--头部-->
-    <div th:replace="~{commons/common_apa::topbar}"></div>
+    <div th:replace="~{commons/common_apa::topbar(clock='4',id=${apa.id})}"></div>
 
 
 
     <!--侧边栏-->
-    <div th:replace="~{commons/common_apa::siderbar(activeURL='declareProcessing')}"></div>
+    <div th:replace="~{commons/common_apa::siderbar(activeURL='declareProcessing',id=${apa.id})}"></div>
 
 
     <!-- 内容主体区域 -->
@@ -46,18 +46,21 @@
     <div class="layui-body" style="padding-top: 50px">
         <div class="layui-container">
             <div class="layui-main">
-                <form style="padding-left: 30px" class="form-inline">
-                    <div class="form-group" id="input_1">
-                        <label for="exampleInputName2">请输入: </label>
-                        <input style="margin-left: 10px" type="text" class="form-control" id="exampleInputName2" placeholder="请输入xxx">
+                <form style="padding-left: 30px" th:action="@{/declareProcessing/{id}(id=${apa.id})}"  method="post" class="form-inline">
+                    <div class="form-group" style="margin-left: 10px">
+                        <lable>处理状态 : </lable>
+                        <select class="form-control" style="margin-left: 10px" name="is_deal">
+                            <option th:value="null" th:text="空"></option>
+                            <option th:value="待处理" th:text="待处理"></option>
+                            <option th:value="处理中" th:text="处理中"></option>
+                            <option th:value="已处理" th:text="已处理"></option>
+                        </select>
                     </div>
                     <div class="form-group" id="input_2">
-                        <label for="exampleInputEmail2">请输入: </label>
-                        <input style="margin-left: 10px" type="text" class="form-control" id="exampleInputEmail2" placeholder="请输入xxx">
+                        <label for="exampleInputEmail2">请输入宿舍: </label>
+                        <input style="margin-left: 10px" th:name="location" type="text" class="form-control" id="exampleInputEmail2" placeholder="请输入宿舍（xxx）">
                     </div>
-
                     <button id="btn_demo" type="submit" class="btn btn-primary">查  询</button>
-
 
                 </form>
 
@@ -67,30 +70,29 @@
                     <table id="table1" class="table table-striped table-sm">
                         <thead>
                         <tr>
+                            <th>学号</th>
                             <th>姓名</th>
-                            <th>申报物品类型</th>
-                            <th>申报内容</th>
-                            <th>申报时间</th>
                             <th>宿舍</th>
-                            <th>处理状态</th>
+                            <th>申报物品</th>
+                            <th>申报时间</th>
+                            <th>申报内容</th>
+                            <th>状态</th>
                             <th>操作</th>
                         </tr>
                         </thead>
                         <tbody>
 
-                        <tr>
-                            <td th:text="1"></td>
-                            <td th:text="2"></td>
-                            <td th:text="3"></td>
-                            <td th:text="4"></td>
-                            <td th:text="5"></td>
-                            <td th:text="6"></td>
-
+                        <tr th:each="impair:${impairs}">
+                            <td th:text="${impair.id}"></td>
+                            <td th:text="${impair.username}"></td>
+                            <td th:text="${impair.location}"></td>
+                            <td th:text="${impair.thisname}"></td>
+                            <td th:text="${#dates.format(impair.thistime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                            <td th:text="${impair.content}"></td>
+                            <td th:text="${impair.is_deal}"></td>
 
                             <td>
-                                <a class="btn btn-sm btn-success">处理</a>
-                                <a class="btn btn-sm btn-danger">删除</a>
-                                <a class="btn btn-sm btn-primary">查询详情</a>
+                                <a class="btn btn-sm btn-success" th:text="${impair.is_deal}=='待处理'?'处理':'取消处理'" th:href="${impair.is_deal}=='待处理'?@{/declareProcessing/deal/{id}/{thistime}/{apa_id}(id=${impair.id},thistime=${impair.thistime},apa_id=${apa.id})}:@{/declareProcessing/redeal/{id}/{thistime}/{apa_id}(id=${impair.id},thistime=${impair.thistime},apa_id=${apa.id})}"></a>
                             </td>
                         </tr>
                         </tbody>

@@ -1,10 +1,7 @@
 package com.example.college.controller;
 
 import com.example.college.mapper.*;
-import com.example.college.pojo.Absence;
-import com.example.college.pojo.Apartment;
-import com.example.college.pojo.Location;
-import com.example.college.pojo.Student;
+import com.example.college.pojo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @Controller
@@ -234,6 +232,7 @@ public class ApartmentController {
             s="apaAdmin/addStudent";
         }else {
             location=apartment.getApartment()+"-"+location;
+            /*查找填写宿舍中的学生为一个集合，通过对集合的size方法来确定是否超出人数*/
             List<Student> students=studentMapper.findByLocation(location);
             if (students.size()==4){
                 /*默认每个宿舍最多四个人*/
@@ -244,6 +243,7 @@ public class ApartmentController {
                 /*id是主键，当填入相同内容时会报错，使用try catch抛出异常返回前台*/
                 try{
                     studentMapper.InsertStudent(stu_id,username,password,sex,grade,number,major,state,location);
+                    /*这里查询的student是返回到学生信息界面需要的数据*/
                     List<Student> students1=studentMapper.selectByBuildingLike(apartment.getApartment()+"-");
                     map.put("students",students1);
                     map.put("apa",apartment);
@@ -345,5 +345,107 @@ public class ApartmentController {
         map.put("apa",apartment);
         map.put("absences",absences);
         return "apaAdmin/absences";
+    }
+    /*进入申报页面*/
+    @GetMapping("/declareProcessing/{id}")
+    public String toDeclareProcessing(@PathVariable("id") String id,
+                                      Map<String,Object> map){
+        Apartment apartment=apartmentMapper.findById(id);
+        List<Impair> impairs=impairMapper.selectByBuildingLike(apartment.getApartment()+"-");
+        map.put("apa",apartment);
+        map.put("impairs",impairs);
+        return "apaAdmin/declareProcessing";
+    }
+    /*修改处理状态（待处理，处理中，已处理）
+    * 为什么要使用时间？
+    * 一个学生可以申报多个，id可能查出一个集合，
+    * 但是同一时间只可能申报一条数据，
+    * 所以用id和申报时间来确定要修改的数据，从而达到修改的目的*/
+    @GetMapping("/declareProcessing/deal/{id}/{thistime}/{apa_id}")
+    public String dealDeclare(@PathVariable("id") String id,
+                              @PathVariable("thistime") String thistime,
+                              @PathVariable("apa_id") String apa_id,
+                              Map<String,Object> map) throws ParseException {
+        Apartment apartment=apartmentMapper.findById(apa_id);
+        /*注意此处，is_deal和前台的操作判定不一样*/
+        String is_deal="处理中";
+
+        Date date=new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US).parse(thistime);
+        String date1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINA).format(date);
+        Date date2=format1.parse(date1);
+        impairMapper.dealState(is_deal,id,date2);
+        /*impairMapper.dealState(is_deal,id,format1.parse(thistime));*/
+        List<Impair> impairs=impairMapper.selectByBuildingLike(apartment.getApartment()+"-");
+        map.put("impairs",impairs);
+        map.put("apa",apartment);
+        return "apaAdmin/declareProcessing";
+    }
+    @GetMapping("/declareProcessing/redeal/{id}/{thistime}/{apa_id}")
+    public String redealDeclare(@PathVariable("id") String id,
+                                @PathVariable("thistime") String thistime,
+                                @PathVariable("apa_id") String apa_id,
+                                Map<String,Object> map) throws ParseException {
+        Apartment apartment=apartmentMapper.findById(apa_id);
+        String is_deal="待处理";
+
+        Date date=new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US).parse(thistime);
+        String date1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINA).format(date);
+        Date date2=format1.parse(date1);
+        impairMapper.dealState(is_deal,id,date2);
+        /*impairMapper.dealState(is_deal,id,format1.parse(thistime));*/
+        List<Impair> impairs=impairMapper.selectByBuildingLike(apartment.getApartment()+"-");
+        map.put("impairs",impairs);
+        map.put("apa",apartment);
+        return "apaAdmin/declareProcessing";
+    }
+    /*管理员查询申报情况*/
+    @PostMapping("/declareProcessing/{id}")
+    public String selectDeclare(@PathVariable("id") String id,
+                                @RequestParam("is_deal") String is_deal,
+                                @RequestParam("location") String location,
+                                Map<String,Object> map){
+        Apartment apartment=apartmentMapper.findById(id);
+        if (is_deal==""){
+            is_deal=null;
+        }
+        if (location==""){
+            location=null;
+        }
+        List<Impair> impairs=impairMapper.selectByApartment(apartment.getApartment()+"-",is_deal,location);
+        map.put("apa",apartment);
+        map.put("impairs",impairs);
+        return "apaAdmin/declareProcessing";
+    }
+    /*进入请假处理页面*/
+    @GetMapping("/leaveProcessing/{id}")
+    public String toLeaveProcessing(@PathVariable("id") String id,
+                                    Map<String,Object> map){
+        Apartment apartment=apartmentMapper.findById(id);
+        map.put("apa",apartment);
+        return "apaAdmin/leaveProcessing";
+    }
+    /*进入反馈处理页面*/
+    @GetMapping("/feedbackProcessing/{id}")
+    public String toFeedbackProcessing(@PathVariable("id") String id,
+                                       Map<String,Object> map){
+        Apartment apartment=apartmentMapper.findById(id);
+        map.put("apa",apartment);
+        return "apaAdmin/feedbackProcessing";
+    }
+    /*进入个人信息页面*/
+    @GetMapping("/personalApaMessage/{id}")
+    public String toPersonalApa(@PathVariable("id") String id,
+                                Map<String,Object> map){
+        Apartment apartment=apartmentMapper.findById(id);
+        map.put("apa",apartment);
+        return "apaAdmin/personalMessage";
+    }
+    /*进入历史记录页面*/
+    @GetMapping("/historyRecords/{id}")
+    public String toHistoryRecords(@PathVariable("id") String id,
+                                   Map<String,Object> map){
+        Apartment apartment=apartmentMapper.findById(id);
+        map.put("apa",apartment);
+        return "apaAdmin/historyRecords";
     }
 }

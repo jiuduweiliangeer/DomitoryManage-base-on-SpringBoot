@@ -43,7 +43,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
-        <!--引入thymeleaf-->
+        <!--引入thymeleaf,也可以直接去maven网站搜索https://mvnrepository.com/-->
         <dependency>
             <groupId>org.thymeleaf</groupId>
             <artifactId>thymeleaf-spring5</artifactId>

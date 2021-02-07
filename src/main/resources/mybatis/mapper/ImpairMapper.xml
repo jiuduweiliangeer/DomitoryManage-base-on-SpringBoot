@@ -10,4 +10,22 @@
         INSERT INTO impair(id,location,thisname,thistime,content,is_deal,username)
         VALUES (#{id},#{location},#{thisname},#{thistime},#{content},#{is_deal},#{username})
     </insert>
+    <select id="selectByBuildingLike" resultType="com.example.college.pojo.Impair">
+        SELECT * FROM impair WHERE location LIKE concat('%','${building}','%')
+    </select>
+    <update id="dealState">
+        UPDATE impair SET is_deal=#{is_deal} WHERE id=#{id} AND thistime=#{thistime}
+    </update>
+    <select id="selectByApartment" resultType="com.example.college.pojo.Impair">
+        SELECT * FROM impair WHERE location LIKE concat('%','${building}','%')
+        <if test="is_deal!=null">
+            AND is_deal=#{is_deal}
+            <if test="location!=null">
+                AND location=#{location}
+            </if>
+        </if>
+        <if test="location!=null">
+            AND location=#{location}
+        </if>
+    </select>
 </mapper>
