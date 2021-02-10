@@ -421,15 +421,85 @@ public class ApartmentController {
     public String toLeaveProcessing(@PathVariable("id") String id,
                                     Map<String,Object> map){
         Apartment apartment=apartmentMapper.findById(id);
+        List<Leave_stu> leave_stus=leave_stuMapper.selectByBuildingLike(apartment.getApartment()+"-");
         map.put("apa",apartment);
+        map.put("leave_stus",leave_stus);
         return "apaAdmin/leaveProcessing";
     }
-    /*进入反馈处理页面*/
+    /*管理员拒绝学生请假*/
+    @GetMapping("/leaveProcessing/reject/{id}/{apa_id}")
+    public String rejectLeave_stu(@PathVariable("id") String id,
+                                  @PathVariable("apa_id") String apa_id,
+                                  Map<String,Object> map){
+        String state="已拒绝";
+        Apartment apartment=apartmentMapper.findById(apa_id);
+        leave_stuMapper.updateState(id,state);
+        List<Leave_stu> leave_stus=leave_stuMapper.selectByBuildingLike(apartment.getApartment()+"-");
+        map.put("apa",apartment);
+        map.put("leave_stus",leave_stus);
+        return "apaAdmin/leaveProcessing";
+    }
+    /*管理员上报学生请假(需排除已经拒绝的请假信息,因为如果再传入时间信息会比较麻烦，所以直接在前端进行操作，当state为拒绝状态时，
+    不显示上报按钮)*/
+    @GetMapping("/leaveProcessing/submit/{id}/{apa_id}")
+    public String submitLeave_stu(@PathVariable("id") String id,
+                                  @PathVariable("apa_id") String apa_id,
+                                  Map<String,Object> map){
+        String state="已上报";
+        Apartment apartment=apartmentMapper.findById(apa_id);
+        leave_stuMapper.updateState(id,state);
+        List<Leave_stu> leave_stus=leave_stuMapper.selectByBuildingLike(apartment.getApartment()+"-");
+        map.put("apa",apartment);
+        map.put("leave_stus",leave_stus);
+        return "apaAdmin/leaveProcessing";
+    }
+    /*管理员意见上报学生请假（需排除已经拒绝的请假信息）*/
+    @GetMapping("/leaveProcessing/submit/{id}")
+    public String submitAllLeave_stu(@PathVariable("id") String id,
+                                     Map<String,Object> map){
+        String state="已上报";
+        Apartment apartment=apartmentMapper.findById(id);
+        List<Leave_stu> leave_stus=leave_stuMapper.selectByBuildingLike(apartment.getApartment()+"-");
+        for (int i=0;i<leave_stus.size();i++){
+            if (leave_stus.get(i).getState().equals("待处理")||leave_stus.get(i).getState().equals("已上报")){
+                leave_stuMapper.updateState(id,state);
+            }
+        }
+        List<Leave_stu> leave_stus1=leave_stuMapper.selectByBuildingLike(apartment.getApartment()+"-");
+        map.put("apa",apartment);
+        map.put("leave_stus",leave_stus1);
+        return "apaAdmin/leaveProcessing";
+    }
+    /*管理员对学生请假信息进行搜索*/
+    @PostMapping("/leaveProcessing/{id}")
+    public String selectLeave_stu(@PathVariable("id") String id,
+                                  @RequestParam("state") String state,
+                                  @RequestParam("id") String stu_id,
+                                  @RequestParam("location") String location,
+                                  Map<String,Object> map){
+        if (state==""){
+            state=null;
+        }
+        if (stu_id==""){
+            stu_id=null;
+        }
+        if (location==""){
+            location=null;
+        }
+        Apartment apartment=apartmentMapper.findById(id);
+        List<Leave_stu> leave_stus=leave_stuMapper.selectByApartment(apartment.getApartment()+"-",state,stu_id,location);
+        map.put("apa",apartment);
+        map.put("leave_stus",leave_stus);
+        return "apaAdmin/leaveProcessing";
+    }
+    /*进入反馈信息页面，只是一个单独页面，没有任何功能，主要是查看反馈信息*/
     @GetMapping("/feedbackProcessing/{id}")
     public String toFeedbackProcessing(@PathVariable("id") String id,
                                        Map<String,Object> map){
         Apartment apartment=apartmentMapper.findById(id);
+        List<Suggest> suggests=suggestMapper.selectByBuilding(apartment.getApartment()+"-");
         map.put("apa",apartment);
+        map.put("suggests",suggests);
         return "apaAdmin/feedbackProcessing";
     }
     /*进入个人信息页面*/

@@ -10,4 +10,34 @@
         INSERT INTO leave_stu(id,username,location,reason,now_time,end_time,state)
         VALUES (#{id},#{username},#{location},#{reason},#{now_time},#{end_time},#{state})
     </insert>
+    <select id="selectByBuildingLike" resultType="com.example.college.pojo.Leave_stu">
+        SELECT * FROM leave_stu WHERE location LIKE concat('%','${building}','%')
+    </select>
+    <update id="updateState">
+        UPDATE leave_stu SET state=#{state} WHERE id=#{id}
+    </update>
+    <select id="selectByApartment" resultType="com.example.college.pojo.Leave_stu">
+        SELECT * FROM leave_stu WHERE location LIKE concat('%','${building}','%')
+        <if test="state!=null">
+            AND state=#{state}
+            <if test="id!=null">
+                AND id=#{id}
+                <if test="location!=null">
+                    AND location=#{location}
+                </if>
+            </if>
+            <if test="location!=null">
+                AND location=#{location}
+            </if>
+        </if>
+        <if test="id!=null">
+            AND id=#{id}
+            <if test="location!=null">
+                AND location=#{location}
+            </if>
+        </if>
+        <if test="location!=null">
+            AND location=#{location}
+        </if>
+    </select>
 </mapper>

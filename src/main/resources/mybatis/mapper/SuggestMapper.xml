@@ -10,4 +10,7 @@
         INSERT INTO suggest(id,username,location,thistime,content)
         VALUES (#{id},#{username},#{location},#{thistime},#{content})
     </insert>
+    <select id="selectByBuilding" resultType="com.example.college.pojo.Suggest">
+        SELECT * FROM suggest WHERE location LIKE concat('%','${building}','%')
+    </select>
 </mapper>

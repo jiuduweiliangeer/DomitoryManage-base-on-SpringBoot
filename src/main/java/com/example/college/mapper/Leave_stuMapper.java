@@ -10,4 +10,7 @@ import java.util.List;
 public interface Leave_stuMapper {
     public List<Leave_stu> findByID(String id);
     public void insertLeave(String id, String username, String location, String reason, Date now_time,Date end_time,String state);
+    public List<Leave_stu> selectByBuildingLike(String building);
+    public void updateState(String id,String state);
+    public List<Leave_stu> selectByApartment(String building,String state,String id,String location);
 }

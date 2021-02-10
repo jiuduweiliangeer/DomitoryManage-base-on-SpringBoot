@@ -10,4 +10,5 @@ import java.util.List;
 public interface SuggestMapper {
     public List<Suggest> findAll();
     public void insertSuggest(String id, String username, String location, Date thistime, String content);
+    public List<Suggest> selectByBuilding(String building);
 }

@@ -46,14 +46,23 @@
     <div class="layui-body" style="padding-top: 50px">
         <div class="layui-container">
             <div class="layui-main">
-                <form style="padding-left: 30px" class="form-inline">
-                    <div class="form-group" id="input_1">
-                        <label for="exampleInputName2">请输入: </label>
-                        <input style="margin-left: 10px" type="text" class="form-control" id="exampleInputName2" placeholder="请输入xxx">
+                <form style="padding-left: 30px" class="form-inline" method="post" th:action="@{/leaveProcessing/{id}(id=${apa.id})}">
+                    <div class="form-group" style="margin-left: 10px">
+                        <lable>处理状态 : </lable>
+                        <select class="form-control" style="margin-left: 10px" name="state">
+                            <option th:value="null" th:text="空"></option>
+                            <option th:value="待处理" th:text="待处理"></option>
+                            <option th:value="已上报" th:text="已上报"></option>
+                            <option th:value="已拒绝" th:text="已拒绝"></option>
+                        </select>
                     </div>
-                    <div class="form-group" id="input_2">
-                        <label for="exampleInputEmail2">请输入: </label>
-                        <input style="margin-left: 10px" type="text" class="form-control" id="exampleInputEmail2" placeholder="请输入xxx">
+                    <div class="form-group" id="input_1" style="margin-left: 10px">
+                        <label for="exampleInputName2">请输入学号: </label>
+                        <input style="margin-left: 10px" th:name="id" type="text" class="form-control" id="exampleInputName2" placeholder="请输入xxx">
+                    </div>
+                    <div class="form-group" id="input_2" style="margin-left: 10px">
+                        <label for="exampleInputEmail2">请输入宿舍: </label>
+                        <input style="margin-left: 10px" th:name="location" type="text" class="form-control" id="exampleInputEmail2" placeholder="请输入xxx">
                     </div>
 
                     <button id="btn_demo" type="submit" class="btn btn-primary">查  询</button>
@@ -67,28 +76,29 @@
                     <table id="table1" class="table table-striped table-sm">
                         <thead>
                         <tr>
+                            <th>学号</th>
                             <th>姓名</th>
-                            <th>请假理由</th>
+                            <th>原因</th>
+                            <th>宿舍</th>
                             <th>开始时间</th>
                             <th>结束时间</th>
-                            <th>宿舍</th>
+                            <th>状态</th>
                             <th>操作</th>
                         </tr>
                         </thead>
                         <tbody>
 
-                        <tr>
-                            <td th:text="1"></td>
-                            <td th:text="2"></td>
-                            <td th:text="3"></td>
-                            <td th:text="4"></td>
-                            <td th:text="5"></td>
-
-
-
+                        <tr th:each="leave_stu:${leave_stus}">
+                            <td th:text="${leave_stu.id}"></td>
+                            <td th:text="${leave_stu.username}"></td>
+                            <td th:text="${leave_stu.reason}"></td>
+                            <td th:text="${leave_stu.location}"></td>
+                            <td th:text="${#dates.format(leave_stu.now_time,'yyyy-MM-dd HH:mm:ss')}"></td>
+                            <td th:text="${#dates.format(leave_stu.end_time,'yyyy-MM-dd HH:mm:ss')}"></td>
+                            <td th:text="${leave_stu.state}"></td>
                             <td>
-                                <a class="btn btn-sm btn-danger">删除</a>
-                                <a class="btn btn-sm btn-primary">查询详情</a>
+                                <a class="btn btn-sm btn-danger" th:href="@{/leaveProcessing/reject/{id}/{apa_id}(id=${leave_stu.id},apa_id=${apa.id})}">拒绝</a>
+                                <a class="btn btn-sm btn-primary" th:if="${leave_stu.state!='已拒绝'}" th:href="@{/leaveProcessing/submit/{id}/{apa_id}(id=${leave_stu.id},apa_id=${apa.id})}">上报</a>
                             </td>
                         </tr>
                         </tbody>

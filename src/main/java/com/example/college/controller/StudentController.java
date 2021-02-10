@@ -195,6 +195,13 @@ public class StudentController {
         return "student/studentLeave";
     }
     //*提交请假信息*//*
+    /*
+    * 添加一条注释
+    * 添加事件：2021/2/10
+    * 一个学生在请假未被处理时，不允许再次请假
+    * 完成二次补充，当请假时间在当前时间之前，则不允许请假，返回错误信息提示：
+    * 请选择正确的请假时间
+    * */
     @PostMapping("/leave/{id}")
     public String SelectLeave(@PathVariable("id") String id,
                               @RequestParam("now_time") String now_time,
@@ -202,13 +209,35 @@ public class StudentController {
                               @RequestParam("reason") String reason,
                               Map<String,Object> map) throws ParseException {
         Student student=studentMapper.findById(id);
+        Date date=new Date();
+        Date dateNow=format1.parse(format1.format(date));
         /*
         * 此处还需要做一个判定，判断开始时间和结束时间的先后，暂未做，前端后续工程完工后，进行补充
         * 前端的数据传输过来应该是yyyy/MM/DDTHH:mm,String类型，所以使用String类型下的replace来修改成String类型的设定格式的Date模板，然后进行转换
+        * 设置一个中间判断值为t，类型为boolean
         * */
-        Date date1= format1.parse(now_time.replace("T"," ")+":00");
-        Date date2= format1.parse(end_time.replace("T"," ")+":00");
-        leaveStuMapper.insertLeave(id,student.getUsername(),student.getLocation(),reason,date1,date2,"待处理");
+        Date date1= format1.parse(now_time.replace("T"," ")+":00");//开始时间
+        Date date2= format1.parse(end_time.replace("T"," ")+":00");//结束时间
+        boolean t=true;
+        try{
+            List<Leave_stu> leave_stus=leaveStuMapper.findByID(id);
+            for (int i=0;i<leave_stus.size();i++){
+                if (leave_stus.get(i).getState().equals("待处理")){
+                    t=false;//当有待处理状态的请假信息时，不允许再次请假
+                }
+            }
+        }catch (Exception e){
+            logger.info("当前没有请假信息");
+        }
+        if (t){
+            if (date1.before(dateNow)||date2.before(dateNow)){
+                map.put("error","请选择正确的请假时间");
+            }else {
+                leaveStuMapper.insertLeave(id,student.getUsername(),student.getLocation(),reason,date1,date2,"待处理");
+            }
+        }else {
+            map.put("error","当前有请假未处理，请等待处理");
+        }
         List<Leave_stu> leaves= leaveStuMapper.findByID(id);
         map.put("leaves",leaves);
         map.put("stu",student);
