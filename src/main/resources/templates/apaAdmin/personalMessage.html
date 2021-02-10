@@ -82,8 +82,8 @@
                 <span th:text="${error}" style="margin-left: 75px;color: red"></span>
                 <div class="layui-form-item">
                     <div class="layui-input-block"style="margin-left: 10px">
-                        <a class="layui-btn layui-btn-normal" th:href="@{/personal/reset/{id}(id=${apa.id})}">修改密码</a>
-                        <a class="layui-btn layui-btn-warm" th:href="@{/personal/bind/{id}(id=${apa.id})}">绑定邮箱</a>
+                        <a class="layui-btn layui-btn-normal" th:href="@{/apa_personal/reset/{apa_id}(apa_id=${apa.id})}">修改密码</a>
+                        <a class="layui-btn layui-btn-warm" th:href="@{/apa_personal/bind/{apa_id}(apa_id=${apa.id})}">绑定邮箱</a>
                     </div>
                 </div>
             </form>

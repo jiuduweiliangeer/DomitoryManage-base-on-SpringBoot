@@ -13,4 +13,6 @@ spring:
 mybatis:
   config-location: classpath:mybatis/mybatis-config.xml
   mapper-locations: classpath:mybatis/mapper/*.xml
+server:
+  port: 8081
 #Alt+7展示一个类里面的方法

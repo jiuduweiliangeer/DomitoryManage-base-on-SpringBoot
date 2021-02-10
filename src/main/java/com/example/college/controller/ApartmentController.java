@@ -2,6 +2,7 @@ package com.example.college.controller;
 
 import com.example.college.mapper.*;
 import com.example.college.pojo.*;
+import com.example.college.sendemail.Demo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,11 @@ public class ApartmentController {
     LocationMapper locationMapper;
     @Autowired
     AbsenceMapper absenceMapper;
+    @Autowired
+    HistoryMapper historyMapper;
+    @Autowired
+    Demo demo;
+    String identity="宿舍管理员";
     Date date=new Date();
     SimpleDateFormat format1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     SimpleDateFormat format2=new SimpleDateFormat("yyyy-MM-dd");
@@ -128,11 +134,14 @@ public class ApartmentController {
     @GetMapping("/apaMain/sign/{id}/{floor}")
     public String signLocation(@PathVariable("id") String id,
                                @PathVariable("floor") String floor,
-                               Map<String,Object> map){
+                               Map<String,Object> map) throws ParseException {
         String state="危险";
+        String operate="标记宿舍";
+        Date thisdate=format1.parse(format1.format(date));
         Apartment apartment=apartmentMapper.findById(id);
         locationMapper.UpdateState(apartment.getApartment(),floor,state);
         List<Location> locations=locationMapper.findByBuilding(apartment.getApartment());
+        historyMapper.insertHistory(apartment.getId(),identity,operate,thisdate);
         map.put("apa",apartment);
         map.put("locations",locations);
         return "apaAdmin/apaMain";
@@ -141,11 +150,14 @@ public class ApartmentController {
     @GetMapping("/apaMain/resign/{id}/{floor}")
     public String resignLoctaion(@PathVariable("id") String id,
                                  @PathVariable("floor") String floor,
-                                 Map<String,Object> map){
+                                 Map<String,Object> map) throws ParseException {
         String state="安全";
+        String operate="取消标记";
+        Date thisdate=format1.parse(format1.format(date));
         Apartment apartment=apartmentMapper.findById(id);
         locationMapper.UpdateState(apartment.getApartment(),floor,state);
         List<Location> locations=locationMapper.findByBuilding(apartment.getApartment());
+        historyMapper.insertHistory(apartment.getId(),identity,operate,thisdate);
         map.put("apa",apartment);
         map.put("locations",locations);
         return "apaAdmin/apaMain";
@@ -245,6 +257,9 @@ public class ApartmentController {
                     studentMapper.InsertStudent(stu_id,username,password,sex,grade,number,major,state,location);
                     /*这里查询的student是返回到学生信息界面需要的数据*/
                     List<Student> students1=studentMapper.selectByBuildingLike(apartment.getApartment()+"-");
+                    String operate="添加学生";
+                    Date thisdate=format1.parse(format1.format(date));
+                    historyMapper.insertHistory(apartment.getId(),identity,operate,thisdate);
                     map.put("students",students1);
                     map.put("apa",apartment);
                     s="apaAdmin/studentMessage";
@@ -262,11 +277,14 @@ public class ApartmentController {
     @GetMapping("/apaStudentMessage/delete/{id}/{stu_id}")
     public String DeleteStudent(@PathVariable("id") String id,
                                 @PathVariable("stu_id") String stu_id,
-                                Map<String,Object> map){
+                                Map<String,Object> map) throws ParseException {
+        String operate="删除学生";
+        Date thisdate=format1.parse(format1.format(date));
         Apartment apartment=apartmentMapper.findById(id);
         String building=apartment.getApartment()+"-";
         studentMapper.deleteStudent(stu_id);
         List<Student> students=studentMapper.selectByBuildingLike(building);
+        historyMapper.insertHistory(apartment.getId(),identity,operate,thisdate);
         map.put("apa",apartment);
         map.put("students",students);
         return "apaAdmin/studentMessage";
@@ -285,6 +303,7 @@ public class ApartmentController {
     @GetMapping("/absence/confirm/{id}")
     public String confirmAbsence(@PathVariable("id") String id,
                                  Map<String,Object> map) throws ParseException {
+        String operate="确认缺勤";
         Date dateNow=format1.parse(format1.format(date));
         Date dateBegin=format1.parse(dateBeginS);
         Date dateEnd=format1.parse(dateEndS);
@@ -305,6 +324,7 @@ public class ApartmentController {
                     }
                 }
                 List<Absence> absences=absenceMapper.selectByBuildingLike(apartment.getApartment()+"-");
+                historyMapper.insertHistory(apartment.getId(),identity,operate,dateNow);
                 map.put("apa",apartment);
                 map.put("absences",absences);
             }catch (Exception e){
@@ -319,11 +339,14 @@ public class ApartmentController {
     /*上报缺勤记录*/
     @GetMapping("/absence/submit/{id}")
     public String submitAbsence(@PathVariable("id") String id,
-                                Map<String,Object> map){
+                                Map<String,Object> map) throws ParseException {
         Apartment apartment=apartmentMapper.findById(id);
+        String operate="上报缺勤";
+        Date thisdate=format1.parse(format1.format(date));
         String state="已上报";
         absenceMapper.updateAbsenceState(state,apartment.getApartment()+"-");
         List<Absence> absences=absenceMapper.selectByBuildingLike(apartment.getApartment()+"-");
+        historyMapper.insertHistory(apartment.getId(),identity,operate,thisdate);
         map.put("apa",apartment);
         map.put("absences",absences);
         return "apaAdmin/absences";
@@ -369,13 +392,15 @@ public class ApartmentController {
         Apartment apartment=apartmentMapper.findById(apa_id);
         /*注意此处，is_deal和前台的操作判定不一样*/
         String is_deal="处理中";
-
+        String operate="联系申报处理";
+        Date thisdate=format1.parse(format1.format(date));
         Date date=new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US).parse(thistime);
         String date1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINA).format(date);
         Date date2=format1.parse(date1);
         impairMapper.dealState(is_deal,id,date2);
         /*impairMapper.dealState(is_deal,id,format1.parse(thistime));*/
         List<Impair> impairs=impairMapper.selectByBuildingLike(apartment.getApartment()+"-");
+        historyMapper.insertHistory(apartment.getId(),identity,operate,thisdate);
         map.put("impairs",impairs);
         map.put("apa",apartment);
         return "apaAdmin/declareProcessing";
@@ -387,13 +412,15 @@ public class ApartmentController {
                                 Map<String,Object> map) throws ParseException {
         Apartment apartment=apartmentMapper.findById(apa_id);
         String is_deal="待处理";
-
+        String operate="取消申报处理";
+        Date thisdate=format1.parse(format1.format(date));
         Date date=new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US).parse(thistime);
         String date1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINA).format(date);
         Date date2=format1.parse(date1);
         impairMapper.dealState(is_deal,id,date2);
         /*impairMapper.dealState(is_deal,id,format1.parse(thistime));*/
         List<Impair> impairs=impairMapper.selectByBuildingLike(apartment.getApartment()+"-");
+        historyMapper.insertHistory(apartment.getId(),identity,operate,thisdate);
         map.put("impairs",impairs);
         map.put("apa",apartment);
         return "apaAdmin/declareProcessing";
@@ -430,11 +457,14 @@ public class ApartmentController {
     @GetMapping("/leaveProcessing/reject/{id}/{apa_id}")
     public String rejectLeave_stu(@PathVariable("id") String id,
                                   @PathVariable("apa_id") String apa_id,
-                                  Map<String,Object> map){
+                                  Map<String,Object> map) throws ParseException {
         String state="已拒绝";
+        String operate="拒绝请假";
+        Date thisdate=format1.parse(format1.format(date));
         Apartment apartment=apartmentMapper.findById(apa_id);
         leave_stuMapper.updateState(id,state);
         List<Leave_stu> leave_stus=leave_stuMapper.selectByBuildingLike(apartment.getApartment()+"-");
+        historyMapper.insertHistory(apartment.getId(),identity,operate,thisdate);
         map.put("apa",apartment);
         map.put("leave_stus",leave_stus);
         return "apaAdmin/leaveProcessing";
@@ -444,11 +474,14 @@ public class ApartmentController {
     @GetMapping("/leaveProcessing/submit/{id}/{apa_id}")
     public String submitLeave_stu(@PathVariable("id") String id,
                                   @PathVariable("apa_id") String apa_id,
-                                  Map<String,Object> map){
+                                  Map<String,Object> map) throws ParseException {
         String state="已上报";
+        String operate="上报请假";
+        Date thisdate=format1.parse(format1.format(date));
         Apartment apartment=apartmentMapper.findById(apa_id);
         leave_stuMapper.updateState(id,state);
         List<Leave_stu> leave_stus=leave_stuMapper.selectByBuildingLike(apartment.getApartment()+"-");
+        historyMapper.insertHistory(apartment.getId(),identity,operate,thisdate);
         map.put("apa",apartment);
         map.put("leave_stus",leave_stus);
         return "apaAdmin/leaveProcessing";
@@ -456,8 +489,10 @@ public class ApartmentController {
     /*管理员意见上报学生请假（需排除已经拒绝的请假信息）*/
     @GetMapping("/leaveProcessing/submit/{id}")
     public String submitAllLeave_stu(@PathVariable("id") String id,
-                                     Map<String,Object> map){
+                                     Map<String,Object> map) throws ParseException {
         String state="已上报";
+        String operate="上报请假";
+        Date thisdate=format1.parse(format1.format(date));
         Apartment apartment=apartmentMapper.findById(id);
         List<Leave_stu> leave_stus=leave_stuMapper.selectByBuildingLike(apartment.getApartment()+"-");
         for (int i=0;i<leave_stus.size();i++){
@@ -466,6 +501,7 @@ public class ApartmentController {
             }
         }
         List<Leave_stu> leave_stus1=leave_stuMapper.selectByBuildingLike(apartment.getApartment()+"-");
+        historyMapper.insertHistory(apartment.getId(),identity,operate,thisdate);
         map.put("apa",apartment);
         map.put("leave_stus",leave_stus1);
         return "apaAdmin/leaveProcessing";
@@ -510,12 +546,119 @@ public class ApartmentController {
         map.put("apa",apartment);
         return "apaAdmin/personalMessage";
     }
-    /*进入历史记录页面*/
-    @GetMapping("/historyRecords/{id}")
-    public String toHistoryRecords(@PathVariable("id") String id,
-                                   Map<String,Object> map){
+    /*进入修改密码界面*/
+    @GetMapping("/apa_personal/reset/{apa_id}")
+    public String toResetApa(@PathVariable("apa_id") String id,
+                          Map<String,Object> map){
+        map.put("apa",apartmentMapper.findById(id));
+        return "apaAdmin/resetPassword";
+    }
+    /*修改密码*/
+    @PostMapping("/apa_personal/reset/{apa_id}")
+    public String resetPasswordApa(@PathVariable("apa_id") String id,
+                                @RequestParam("old_password") String old_password,
+                                @RequestParam("new_password") String new_password,
+                                Map<String,Object> map){
+        String s=null;
         Apartment apartment=apartmentMapper.findById(id);
         map.put("apa",apartment);
+        if (apartment.getPassword().equals(old_password)){
+            apartmentMapper.setNewPassword(id,new_password);
+            s="apaAdmin/personalMessage";
+        }else {
+            map.put("error","原密码不正确");
+            s="apaAdmin/resetPassword";
+        }
+        return s;
+    }
+    /*进入绑定邮箱界面*/
+    /*
+     * 几种情况
+     *   1.当用户已经绑定邮箱后，应该显示错误信息为“已绑定邮箱”（此为初步设定，后续可能会改成修改邮箱）
+     *   2.当用户没有绑定邮箱时，应该直接进入绑定邮箱界面
+     *       在绑定邮箱界面里，需要考虑的错误情况：
+     *           检查Apa和Stu表中的邮箱数据，查看是否有相同的邮箱数据，如果有相同的邮箱，则返回错误数据”当前邮箱已被绑定“
+     *           当检测通过后，进入确认验证码阶段，在这个界面应该有重复提交的机会（在登录的时候因为对POST和GET理解不够没有实现，后续整理
+     *           时应该进行修改）
+     *           绑定成功后返回主界面
+     * */
+    @GetMapping("/apa_personal/bind/{apa_id}")
+    public String toBindApa(@PathVariable("apa_id") String id,
+                         Map<String,Object> map){
+        Apartment apartment=apartmentMapper.findById(id);
+        map.put("apa",apartment);
+        String s=null;
+        String t=apartment.getEmail();
+        if(t==null||t.trim().equals("")){
+            s="apaAdmin/bindEmail";
+        }else {
+            map.put("error","已绑定邮箱");
+            s="apaAdmin/personalMessage";
+        }
+        return s;
+    }
+    @PostMapping("/apa_personal/bind/{apa_id}")
+    public String BindEmail_1Apa(@PathVariable("apa_id") String id,
+                              @RequestParam("email") String email,
+                              Map<String,Object> map){
+        String s=null;
+        Apartment apartment=apartmentMapper.findById(id);
+        map.put("apa",apartment);
+        if (studentMapper.findEmail(email)==null&&apartmentMapper.findEmail(email)==null){
+            String code=demo.email(email);
+            map.put("code",code);
+            map.put("email",email);
+            s="apaAdmin/bindEmail_2";
+        }else {
+            map.put("error","当前邮箱已被绑定");
+            s="apaAdmin/bindEmail";
+        }
+        return s;
+    }
+    /*确认验证码*/
+    @PostMapping("/apa_personal/bind/{apa_id}/{code}/{email}")
+    public String BindEmail_2Apa(@PathVariable("apa_id") String id,
+                              @PathVariable("code") String code,
+                              @PathVariable("email") String email,
+                              @RequestParam("email_code") String email_code,
+                              Map<String,Object> map){
+        String s=null;
+        Apartment apartment=apartmentMapper.findById(id);
+        map.put("apa",apartment);
+        if (email_code.equals(code)){
+            apartmentMapper.setEmail(id,email);
+            s="apaAdmin/personalMessage";
+        }else {
+            map.put("error","您输入的验证码不正确");
+            map.put("code",code);
+            map.put("email",email);
+            s="apaAdmin/bindEmail_2";
+        }
+        return s;
+    }
+    /*进入历史记录页面*/
+    @GetMapping("/historyRecordsApa/{id}")
+    public String toHistoryRecordsApa(@PathVariable("id") String id,
+                                   Map<String,Object> map){
+        Apartment apartment=apartmentMapper.findById(id);
+        List<History> histories=historyMapper.findByID(id);
+        map.put("apa",apartment);
+        map.put("histories",histories);
         return "apaAdmin/historyRecords";
     }
+    /*管理员查询历史记录*/
+    @PostMapping("/historyRecordsApa/{id}")
+    public String selectHistoryRecordsApa(@PathVariable("id") String id,
+                                          @RequestParam("operate") String operate,
+                                          Map<String,Object> map){
+        if (operate==""){
+            operate=null;
+        }
+        List<History> histories=historyMapper.selectByApartment(id,operate);
+        Apartment apartment=apartmentMapper.findById(id);
+        map.put("apa",apartment);
+        map.put("histories",histories);
+        return "apaAdmin/historyRecords";
+    }
+
 }

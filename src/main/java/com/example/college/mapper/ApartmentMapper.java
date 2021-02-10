@@ -8,4 +8,5 @@ public interface ApartmentMapper {
     public Apartment findById(String id);
     public void setNewPassword(String id,String password);
     public Apartment findEmail(String email);
+    public void setEmail(String id,String email);
 }

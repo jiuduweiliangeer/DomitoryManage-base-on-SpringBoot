@@ -12,4 +12,7 @@
     <update id="setNewPassword">
         UPDATE apartment SET password=#{password} WHERE id=#{id}
     </update>
+    <update id="setEmail">
+        UPDATE apartment SET email=#{email} WHERE id=#{id}
+    </update>
 </mapper>

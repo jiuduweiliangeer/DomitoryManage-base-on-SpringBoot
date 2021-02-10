@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.college.mapper.HistoryMapper">
+    <select id="findByID" resultType="com.example.college.pojo.History">
+        SELECT * FROM history WHERE id=#{id}
+    </select>
+    <insert id="insertHistory">
+        INSERT INTO history(id,identity,operate,thisdate)
+        VALUES (#{id},#{identity},#{operate},#{thisdate})
+    </insert>
+    <delete id="deleteHistory">
+        DELETE FROM history WHERE id=#{id} AND thisdate=#{thisdate}
+    </delete>
+    <select id="selectByApartment" resultType="com.example.college.pojo.History">
+        SELECT * FROM history WHERE id=#{id}
+        <if test="operate!=null">
+            AND operate=#{operate}
+        </if>
+    </select>
+</mapper>
