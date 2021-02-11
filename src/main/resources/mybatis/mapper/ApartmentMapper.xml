@@ -6,13 +6,39 @@
     <select id="findById" resultType="com.example.college.pojo.Apartment">
         SELECT * FROM apartment WHERE id=#{id}
     </select>
+    <select id="findAll" resultType="com.example.college.pojo.Apartment">
+        SELECT * FROM apartment
+    </select>
     <select id="findEmail" resultType="com.example.college.pojo.Apartment">
         SELECT * FROM apartment WHERE email=#{email}
     </select>
+    <select id="selectBySchoolAdmin" resultType="com.example.college.pojo.Apartment">
+        SELECT * FROM apartment
+        <if test="sex!=null">
+            WHERE sex=#{sex}
+            <if test="apartment!=null">
+                AND apartment=#{apartment}
+            </if>
+        </if>
+        <if test="apartment!=null">
+            WHERE apartment=#{apartment}
+        </if>
+    </select>
+    <insert id="insertApartment">
+        INSERT INTO apartment(id,username,password,sex,age,phone,apartment)
+        VALUES (#{id},#{username},#{password},#{sex},#{age},#{phone},#{apartment})
+    </insert>
+    <update id="setExcludeStateAndEmail">
+        UPDATE apartment SET username=#{username},password=#{password}
+        ,sex=#{sex},age=#{age},phone=#{phone},apartment=#{apartment} WHERE id=#{id}
+    </update>
     <update id="setNewPassword">
         UPDATE apartment SET password=#{password} WHERE id=#{id}
     </update>
     <update id="setEmail">
         UPDATE apartment SET email=#{email} WHERE id=#{id}
     </update>
+    <delete id="deleteApartment">
+        DELETE FROM apartment WHERE id=#{id}
+    </delete>
 </mapper>

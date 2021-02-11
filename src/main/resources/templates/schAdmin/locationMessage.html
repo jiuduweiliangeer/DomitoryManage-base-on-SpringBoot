@@ -31,12 +31,12 @@
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <!--头部-->
-    <div th:replace="~{commons/common_apa::topbar(clock='1',id=${apa.id})}"></div>
+    <div th:replace="~{commons/common_school::topbar(clock='1',id=${sch.sch_id})}"></div>
 
 
 
     <!--侧边栏-->
-    <div th:replace="~{commons/common_apa::siderbar(activeURL='studentMessage',id=${apa.id})}"></div>
+    <div th:replace="~{commons/common_school::siderbar(activeURL='schoolMain',id=${sch.sch_id})}"></div>
 
 
     <!-- 内容主体区域 -->

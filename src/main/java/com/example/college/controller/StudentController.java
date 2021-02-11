@@ -37,6 +37,7 @@ public class StudentController {
     AbsenceMapper absenceMapper;
     @Autowired
     Demo demo;
+    String identity="学生";
     SimpleDateFormat format1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     SimpleDateFormat format2=new SimpleDateFormat("yyyy-MM-dd");
     @GetMapping("/backLogin")

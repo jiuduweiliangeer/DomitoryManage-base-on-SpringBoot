@@ -192,9 +192,11 @@ public class LoginController {
                 if (school!=null){
                     String password1=school.getSch_password();
                     if (password.equals(password1)){
-                        map.put("id",id);
+                        List<Apartment> apartments=apartmentMapper.findAll();
+                        map.put("sch",school);
+                        map.put("apartments",apartments);
                         //根据前端页面修改
-                        s="success";
+                        s="schAdmin/schoolMain";
                     }else{
                         map.put("error","您输入的密码错误");
                         s="login";

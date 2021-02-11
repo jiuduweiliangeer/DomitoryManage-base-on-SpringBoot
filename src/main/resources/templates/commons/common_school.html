@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+
+<div class="layui-header" th:fragment="topbar">
+    <div class="layui-logo">宿舍管理系统</div>
+
+    <ul class="layui-nav layui-layout-right">
+        <li class="layui-nav-item">
+            <a href="javascript:;">
+                <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                用户名
+            </a>
+            <dl class="layui-nav-child">
+                <dd><a href="">基本资料</a></dd>
+                <dd><a href="">安全设置</a></dd>
+            </dl>
+        </li>
+        <li class="layui-nav-item"><a th:href="@{/backLogin}" href="">退了</a></li>
+    </ul>
+</div>
+
+<div class="layui-side layui-bg-black" th:fragment="siderbar">
+    <div class="layui-side-scroll">
+        <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+        <ul class="layui-nav layui-nav-tree"  lay-filter="test_1">
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test" >
+                <li class="layui-nav-item">
+                    <a href="javascript:;">人 事 管 理</a>
+                    <dl class="layui-nav-child">
+                        <dd th:class="${activeURL=='schoolMain'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
+                            <a th:href="@{/schoolMain/{id}(id=${id})}" href="">宿管信息</a>
+                        </dd>
+                        <dd th:class="${activeURL=='addAdministrator'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
+                            <a th:href="@{/addAdministrator/{id}(id=${id})}" href="">添加宿管</a>
+                        </dd>
+                    </dl>
+                </li>
+                <li th:class="${activeURL=='absenceManage'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}"><a th:href="@{/schAdmin/absenceManage}" href="javascript:;">缺 勤 管 理</a></li>
+                <li th:class="${activeURL=='dormitoryDistribution'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}"><a th:href="@{/schAdmin/dormitoryDistribution}" href="javascript:;">宿 舍 分 布 情 况</a></li>
+
+            </ul>
+
+        </ul>
+    </div>
+</div>
+
+
+
+
+</html>

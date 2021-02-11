@@ -6,6 +6,9 @@
     <select id="findById" resultType="com.example.college.pojo.Student">
          SELECT * FROM student WHERE stu_id=#{id}
     </select>
+    <select id="findAll" resultType="com.example.college.pojo.Student">
+        SELECT * FROM student
+    </select>
     <select id="findEmail" resultType="com.example.college.pojo.Student">
         SELECT * FROM student WHERE email=#{email}
     </select>

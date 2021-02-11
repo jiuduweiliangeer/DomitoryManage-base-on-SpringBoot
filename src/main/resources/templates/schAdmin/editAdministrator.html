@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>layout 后台大布局 - Layui</title>
+
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" href="../src/css/layui.css">
+    <link th:href="@{/asserts/css/bootstrap.min.css}" href="../../static/asserts/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <script th:src="@{/layui/layui.js}" src="../src/layui.js"></script>
+
+    <style type="text/css">
+
+
+    </style>
+
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <!--头部-->
+    <div th:replace="~{commons/common_school::topbar(clock='1',id=${sch.sch_id})}"></div>
+
+
+
+    <!--侧边栏-->
+    <div th:replace="~{commons/common_school::siderbar(activeURL='schoolMain',id=${sch.sch_id})}"></div>
+
+
+    <!-- 内容主体区域 -->
+
+    <div class="layui-body" style="padding-top: 50px">
+        <div class="layui-container" style="margin-left: 100px">
+            <div class="layui-main">
+                <form action="" th:action="@{/schoolMain/editAdministrator/{id}/{sch_id}(id=${apa.id},sch_id=${sch.sch_id})}" method="post">
+                    <div class="form-group row">
+                        <label for="input_1" class="col-sm-2 control-label" style="margin-top: 5px;text-align: center">账号</label>
+                        <div class="col-sm-10">
+                            <input type="text" th:value="${apa.id}" readonly="readonly" th:name="id" class="form-control" id="input_1" th:placeholder="${apa.id}" placeholder="id">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="input_2" class="col-sm-2 control-label" style="margin-top: 6px;text-align: center">姓名</label>
+                        <div class="col-sm-10">
+                            <input type="text" th:value="${apa.username}" th:name="username" class="form-control" id="input_2" th:placeholder="${apa.username}" placeholder="username">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="input_3" class="col-sm-2 control-label" style="margin-top: 7px;text-align: center">密码</label>
+                        <div class="col-sm-10">
+                            <input type="text" th:value="${apa.password}" th:name="password" class="form-control" id="input_3" th:placeholder="${apa.password}" placeholder="password">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="input_5" class="col-sm-2 control-label" style="margin-top: 7px;text-align: center">性别</label>
+                        <div class="col-sm-10">
+                            <input type="text" th:value="${apa.sex}" th:name="sex" class="form-control" id="input_5" th:placeholder="${apa.sex}" placeholder="sex">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="input_6" class="col-sm-2 control-label" style="margin-top: 7px;text-align: center">年龄</label>
+                        <div class="col-sm-10">
+                            <input type="text" th:value="${apa.age}" th:name="age" class="form-control" id="input_6" th:placeholder="${apa.age}" placeholder="age">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="input_7" class="col-sm-2 control-label" style="margin-top: 7px;text-align: center">电话</label>
+                        <div class="col-sm-10">
+                            <input type="text" th:value="${apa.phone}" th:name="phone" class="form-control" id="input_7" th:placeholder="${apa.phone}" placeholder="phone">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="input_8" class="col-sm-2 control-label" style="margin-top: 7px;text-align: center">楼栋</label>
+                        <div class="col-sm-10">
+                            <input type="text" th:value="${apa.apartment}" th:name="apartment" class="form-control" id="input_8" th:placeholder="${apa.apartment}" placeholder="apartment">
+                        </div>
+                    </div>
+                    <label style="color: red;margin-left: 65px" th:text="${error}"></label>
+                    <div class="float-right">
+                        <button  type="submit" class="btn btn-warning">修 改</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!--        <div style="padding: 15px;">内容主体区域</div>-->
+
+
+
+</div>
+
+<script>
+
+    layui.use('element',function () {
+        var element = layui.element;
+    })
+
+
+</script>
+</body>
+</html>
