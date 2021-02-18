@@ -213,7 +213,7 @@ public class StudentController {
         Date date=new Date();
         Date dateNow=format1.parse(format1.format(date));
         /*
-        * 此处还需要做一个判定，判断开始时间和结束时间的先后，暂未做，前端后续工程完工后，进行补充
+        * 此处还需要做一个判定，判断开始时间和结束时间的先后，暂未做，前端后续工程完工后，进行补充 2021/2/18 已完成
         * 前端的数据传输过来应该是yyyy/MM/DDTHH:mm,String类型，所以使用String类型下的replace来修改成String类型的设定格式的Date模板，然后进行转换
         * 设置一个中间判断值为t，类型为boolean
         * */
