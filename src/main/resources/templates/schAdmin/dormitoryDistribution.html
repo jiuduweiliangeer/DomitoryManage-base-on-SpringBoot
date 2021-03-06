@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>layout 后台大布局 - Layui</title>
+    <title>宿舍管理系统</title>
 
     <link rel="stylesheet" th:href="@{/layui/css/layui.css}" href="../src/css/layui.css">
     <link th:href="@{/asserts/css/bootstrap.min.css}" href="../../static/asserts/css/bootstrap.min.css" rel="stylesheet">
@@ -50,28 +50,27 @@
     <div class="layui-body" style="padding-top: 50px">
         <div class="layui-container">
             <div class="layui-main">
-                <form style="padding-left: 30px" class="form-inline">
-                    <div class="form-group">
-                        <lable><b>年级 : </b></lable>
-                        <select class="form-control" style="margin-left: 10px" name="state">
-                            <option th:value="大一" th:text="大一"></option>
-                            <option th:value="大二" th:text="大二"></option>
-                            <option th:value="大三" th:text="大三"></option>
-                            <option th:value="大四" th:text="大四"></option>
+                <form style="padding-left: 30px" class="form-inline" method="post" th:action="@{/distribution/select/{id}(id=${sch.sch_id})}">
+
+                    <div class="form-group" id="input_1">
+                        <label for="exampleInputEmail1">请输入楼栋: </label>
+                        <input style="margin-left: 10px" th:name="apartment" type="text" class="form-control" id="exampleInputEmail1" placeholder="请输入楼栋">
+                    </div>
+
+                    <div class="form-group" id="input_2">
+                        <lable>男/女寝 : </lable>
+                        <select class="form-control" style="margin-left: 10px" name="apa_sex">
+                            <option th:value="null" th:text="男或女"></option>
+                            <option th:value="男" th:text="男"></option>
+                            <option th:value="女" th:text="女"></option>
                         </select>
                     </div>
-                    <div class="form-group" id="input_1" style="margin-left: 20px">
-                        <label for="exampleInputName1">栋数: </label>
-                        <input style="margin-left: 10px" type="text" class="form-control" id="exampleInputName1" placeholder="请输入栋数">
-                    </div>
-                    <div class="form-group" id="input_2">
-                        <label for="exampleInputEmail2">楼号: </label>
-                        <input style="margin-left: 10px" type="text" class="form-control" id="exampleInputEmail2" placeholder="请输入楼号">
-                    </div>
+
                     <div class="form-group" id="input_3">
-                        <label for="exampleInputEmail3">专业: </label>
-                        <input style="margin-left: 10px" type="text" class="form-control" id="exampleInputEmail3" placeholder="请输入专业">
+                        <label for="exampleInputEmail3">请输入宿管名字: </label>
+                        <input style="margin-left: 10px" th:name="username" type="text" class="form-control" id="exampleInputEmail3" placeholder="请输入宿管名字">
                     </div>
+
 
                     <button id="btn_demo" type="submit" class="btn btn-primary">查  询</button>
 
@@ -85,22 +84,22 @@
                         <thead>
                         <tr>
                             <th>栋数</th>
-                            <th>楼号</th>
-                            <th>学生情况</th>
-                            <th>状态</th>
+                            <th>男/女寝</th>
+                            <th>宿舍管理员</th>
+                            <th>电话</th>
                             <th>操作</th>
 
                         </tr>
                         </thead>
                         <tbody>
 
-                        <tr>
-                            <td th:text="1"></td>
-                            <td th:text="2"></td>
-                            <td th:text="3"></td>
-                            <td th:text="4"></td>
+                        <tr th:each="apartment:${apartments}">
+                            <td th:text="${apartment.apartment}"></td>
+                            <td th:text="${apartment.apa_sex}"></td>
+                            <td th:text="${apartment.username}"></td>
+                            <td th:text="${apartment.phone}"></td>
                             <td>
-                                <a th:href="@{/schAdmin/apartmentDetails}" class="btn btn-sm btn-warning">查询详情</a>
+                                <a class="btn btn-sm btn-warning" th:href="@{/distribution/details/{building}/{id}(building=${apartment.apartment},id=${sch.sch_id})}">查询详情</a>
                             </td>
                         </tr>
                         </tbody>

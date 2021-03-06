@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>宿舍管理系统</title>
+
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" href="../src/css/layui.css">
+    <link th:href="@{/asserts/css/bootstrap.min.css}" href="../../static/asserts/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <script th:src="@{/layui/layui.js}" src="../src/layui.js"></script>
+
+    <style type="text/css">
+
+
+    </style>
+
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <!--头部-->
+    <div th:replace="~{commons/common_apa::topbar(clock='9',id=${apa.id})}"></div>
+
+
+
+    <!--侧边栏-->
+    <div th:replace="~{commons/common_apa::siderbar(activeURL='alienRegistration',id=${apa.id})}"></div>
+
+
+    <!-- 内容主体区域 -->
+
+    <div class="layui-body" style="padding-top: 50px">
+        <div class="layui-container" style="margin-left: 100px">
+            <div class="layui-main">
+                <form th:action="@{/alienRegistration/addRegist/{apa_id}(apa_id=${apa.id})}" method="post">
+                    <div class="form-group row">
+                        <label for="input_1" class="col-sm-2 control-label" style="margin-top: 5px;text-align: center">姓名</label>
+                        <div class="col-sm-10">
+                            <input required="required" th:name="name" type="text" class="form-control" id="input_1" placeholder="请输入姓名:xxxxx">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="input_2" class="col-sm-2 control-label" style="margin-top: 6px;text-align: center">理由</label>
+                        <div class="col-sm-10">
+                            <input required="required" th:name="reason" type="text" class="form-control" id="input_2" placeholder="请输入理由:xxx">
+                        </div>
+                    </div>
+                    <!--初始密码设定为123456-->
+                    <!--                   <div class="form-group row">
+                                           <label for="input_3" class="col-sm-2 control-label" style="margin-top: 7px;text-align: center">密码</label>
+                                           <div class="col-sm-10">
+                                               <input type="text" class="form-control" id="input_3" placeholder="password">
+                                           </div>
+                                       </div>-->
+                    <div class="form-group row">
+                        <label for="input_4" class="col-sm-2 control-label" style="margin-top: 7px;text-align: center">进入时间</label>
+                        <div class="col-sm-10">
+                            <input required="required" th:name="in_time" type="text" class="form-control" id="input_4" placeholder="例如:xxxx-xx-xx xx-xx-xx">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="input_5" class="col-sm-2 control-label" style="margin-top: 7px;text-align: center">离开时间</label>
+                        <div class="col-sm-10">
+                            <input required="required" th:name="out_time" type="text" class="form-control" id="input_5" placeholder="例如:xxxx-xx-xx xx-xx-xx">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="input_6" class="col-sm-2 control-label" style="margin-top: 7px;text-align: center">手机</label>
+                        <div class="col-sm-10">
+                            <input required="required" th:name="phone" type="text" class="form-control" id="input_6" placeholder="请输入电话:xxxxxxxxxxx">
+                        </div>
+                    </div>
+
+<!--                    <div class="float-right">-->
+<!--                        <label th:text="${error}" style="color: red"></label>-->
+<!--                    </div>-->
+                    <div class="float-right">
+                        <button type="submit" class="btn btn-primary">登 记</button>
+                    </div>
+                </form>
+
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!--        <div style="padding: 15px;">内容主体区域</div>-->
+
+
+
+</div>
+
+<script>
+
+    layui.use('element',function () {
+        var element = layui.element;
+    })
+
+
+</script>
+</body>
+</html>

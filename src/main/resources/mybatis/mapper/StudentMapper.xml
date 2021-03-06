@@ -86,4 +86,24 @@
     <delete id="deleteStudent">
         DELETE FROM student WHERE stu_id=#{stu_id}
     </delete>
+    <select id="selectByFloor" resultType="com.example.college.pojo.Student">
+        select * from student
+        <where>
+                <if test="grade!=null">
+                    grade=#{grade}
+                </if>
+                <if test="number!=null">
+                    and number=#{number}
+                </if>
+                <if test="location!=null">
+                    and location like concat('%',#{location},'%')
+                </if>
+                <if test="username!=null">
+                    and username=#{username}
+                </if>
+                <if test="major!=null">
+                    and major=#{major}
+                </if>
+        </where>
+    </select>
 </mapper>

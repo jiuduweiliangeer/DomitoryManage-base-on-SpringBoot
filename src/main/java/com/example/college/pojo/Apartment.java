@@ -9,11 +9,12 @@ public class Apartment {
     private String age;
     private String phone;
     private String apartment;
+    private String apa_sex;
     private String state;
     public Apartment(){
 
     }
-    public Apartment(String id, String username, String password, String email, String sex, String age, String phone, String apartment, String state) {
+    public Apartment(String id, String username, String password, String email, String sex, String age, String phone, String apartment,String apa_sex, String state) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -22,6 +23,7 @@ public class Apartment {
         this.age = age;
         this.phone = phone;
         this.apartment = apartment;
+        this.apa_sex = apa_sex;
         this.state = state;
     }
 
@@ -36,6 +38,7 @@ public class Apartment {
                 ", age='" + age + '\'' +
                 ", phone='" + phone + '\'' +
                 ", apartment='" + apartment + '\'' +
+                ", apa_sex='" + apa_sex + '\'' +
                 ", state='" + state + '\'' +
                 '}';
     }
@@ -102,6 +105,14 @@ public class Apartment {
 
     public void setApartment(String apartment) {
         this.apartment = apartment;
+    }
+
+    public String getApa_sex() {
+        return apa_sex;
+    }
+
+    public void setApa_sex(String apa_sex) {
+        this.apa_sex = apa_sex;
     }
 
     public String getState() {

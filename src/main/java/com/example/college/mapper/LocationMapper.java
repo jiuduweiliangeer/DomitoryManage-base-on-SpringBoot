@@ -8,7 +8,7 @@ import java.util.List;
 @Repository
 public interface LocationMapper {
     public List<Location> findByBuilding(String building);
-    public List<Location> SelectLocation(String building,String is_home,String state,String floor);
-    public void UpdateIs_home(String building,String floor,String is_home);
-    public void UpdateState(String building,String floor,String state);
+    public List<Location> SelectLocation(String building, String is_home, String state, String floor);
+    public void UpdateIs_home(String building, String floor, String is_home);
+    public void UpdateState(String building, String floor, String state);
 }

@@ -33,12 +33,12 @@
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <!--头部-->
-    <div th:replace="~{commons/common_apa::topbar(clock='8',id=${apa.id})}"></div>
+    <div th:replace="~{commons/common::topbar(clock='1',id=${stu.getStu_id()})}"></div>
 
 
 
     <!--侧边栏-->
-    <div th:replace="~{commons/common_apa::siderbar(activeURL='historyRecords',id=${apa.id})}"></div>
+    <div th:replace="~{commons/common::siderbar(activeURL='historyRecords',id=${stu.getStu_id()})}"></div>
 
 
     <!-- 内容主体区域 -->
@@ -46,24 +46,15 @@
     <div class="layui-body" style="padding-top: 50px">
         <div class="layui-container">
             <div class="layui-main">
-                <form style="padding-left: 30px" class="form-inline" method="post" th:action="@{/historyRecordsApa/{id}(id=${apa.id})}">
+                <form style="padding-left: 30px" class="form-inline" method="post" th:action="@{/historySelect/{id}(id=${stu.getStu_id()})}">
                     <div class="form-group" style="margin-left: 10px">
                         <lable>处理状态 : </lable>
                         <select class="form-control" style="margin-left: 10px" name="operate">
                             <option th:value="null" th:text="空"></option>
-                            <option th:value="标记宿舍" th:text="标记宿舍"></option>
-                            <option th:value="取消标记" th:text="取消标记"></option>
-                            <option th:value="确认缺勤" th:text="确认缺勤"></option>
-                            <option th:value="上报缺勤" th:text="上报缺勤"></option>
-                            <option th:value="联系申报处理" th:text="联系申报处理"></option>
-                            <option th:value="取消申报处理" th:text="取消申报处理"></option>
-                            <option th:value="完成申报处理" th:text="完成申报处理"></option>
-                            <option th:value="拒绝请假" th:text="拒绝请假"></option>
-                            <option th:value="上报请假" th:text="上报请假"></option>
-                            <option th:value="添加学生" th:text="添加学生"></option>
-                            <option th:value="删除学生" th:text="删除学生"></option>
-                            <option th:value="外来登记" th:text="外来登记"></option>
-                            <option th:value="删除登记" th:text="删除登记"></option>
+                            <option th:value="维修申报" th:text="维修申报"></option>
+                            <option th:value="外出请假" th:text="外出请假"></option>
+                            <option th:value="意见反馈" th:text="意见反馈"></option>
+
                         </select>
                     </div>
 

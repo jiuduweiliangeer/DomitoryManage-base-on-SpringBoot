@@ -1,23 +1,25 @@
 package com.example.college.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.example.college.mapper.*;
-import com.example.college.pojo.Apartment;
-import com.example.college.pojo.Location;
-import com.example.college.pojo.School;
-import com.example.college.pojo.Student;
+import com.example.college.pojo.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpSession;
 import java.text.ParseException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 @Controller
 public class SchoolManageController {
     @Autowired
@@ -32,6 +34,8 @@ public class SchoolManageController {
     LocationMapper locationMapper;
     @Autowired
     ApartmentMapper apartmentMapper;
+    @Autowired
+    Leave_stuMapper leave_stuMapper;
     String identity="学校管理员";
     Logger logger= LoggerFactory.getLogger(getClass());
     /*前往主界面，管理员信息*/
@@ -83,6 +87,7 @@ public class SchoolManageController {
                                     @RequestParam("age") String age,
                                     @RequestParam("phone") String phone,
                                     @RequestParam("apartment") String apartment,
+                                    @RequestParam("apa_sex") String apa_sex,
                                     Map<String,Object> map){
         String s=null;
         School school=schoolMapper.findById(sch_id);
@@ -93,7 +98,7 @@ public class SchoolManageController {
             map.put("error","请输入正确的楼栋号");
             s="schAdmin/editAdministrator";
         }else {
-            apartmentMapper.setExcludeStateAndEmail(id,username,password,sex,age,phone,apartment);
+            apartmentMapper.setExcludeStateAndEmail(id,username,password,sex,age,phone,apartment,apa_sex);
             List<Apartment> apartments=apartmentMapper.findAll();
             map.put("sch",school);
             map.put("apartments",apartments);
@@ -274,6 +279,7 @@ public class SchoolManageController {
                                    @RequestParam("age") String age,
                                    @RequestParam("phone") String phone,
                                    @RequestParam("apartment") String apartment,
+                                   @RequestParam("apa_sex") String apa_sex,
                                    Map<String,Object> map){
         String s=null;
         boolean t=true;
@@ -288,7 +294,7 @@ public class SchoolManageController {
             }
             if (t){
                 if (!apartment.contains("-")){
-                    apartmentMapper.insertApartment(apa_id,username,password,sex,age,phone,apartment);
+                    apartmentMapper.insertApartment(apa_id,username,password,sex,age,phone,apartment,apa_sex);
                     List<Apartment> apartments1=apartmentMapper.findAll();
                     map.put("sch",school);
                     map.put("apartments",apartments1);
@@ -313,4 +319,222 @@ public class SchoolManageController {
         }
         return s;
     }
+
+    /*请假处理
+    * 2021/2/23记录:
+    * 对学生的请假请假情况进行审批(包括:同意和拒绝)
+     */
+    @GetMapping("/schAdmin/absenceManage/{id}")
+    public String absenceMangage(@PathVariable("id") String id, Map<String,Object> map, HttpSession session){
+
+
+        School school = schoolMapper.findById(id);
+
+        map.put("sch",school);
+        session.setAttribute("sch_id",school.getSch_id());
+        return "schAdmin/absenceManage";
+    }
+
+    @RequestMapping("/schAdmin/showLeaveTable")
+    @ResponseBody
+    public String showleaveTable(int page,int limit) throws JsonProcessingException {
+        int count = 0;
+        //System.out.println("page: "+page+"--limit: "+limit);
+        Map<String,Object> map = new HashMap<>();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,false);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        objectMapper.setDateFormat(simpleDateFormat);
+        count = leave_stuMapper.selectTotal();
+       // System.out.println(count);
+        List<Leave_stu> list = leave_stuMapper.selectLeaves((page-1)*limit,limit);
+        map.put("data",list);
+        map.put("code",0);
+        map.put("count",count);
+        String s = objectMapper.writeValueAsString(map);
+
+        return s;
+    }
+
+    @RequestMapping("/schAdmin/leaveProcessing")
+    @ResponseBody
+    public String schLeaves(String state,String id,String location,String building,int page,int limit) throws JsonProcessingException {
+
+        if (state==""){
+            state=null;
+        }
+        if (location==""){
+            location=null;
+        }
+        if (building==""){
+            building=null;
+        }if (id==""){
+            id=null;
+        }
+        if (building!=null){
+            building=building+"-";
+        }
+
+        String s = "";
+
+        Map<String,Object> map = new HashMap<>();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,false);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        objectMapper.setDateFormat(simpleDateFormat);
+
+
+        List<Leave_stu> list = leave_stuMapper.schLeaves(state,id,location,building,(page-1)*limit,limit);
+        map.put("code",0);
+        map.put("count",list.size());
+        map.put("data",list);
+        s = objectMapper.writeValueAsString(map);
+
+        return s;
+
+    }
+
+    //学校管理员的请假处理（同意和拒绝）
+    @RequestMapping("/leave/agree")
+    @ResponseBody
+    public String leaveAgree(@RequestBody JSONObject jsonObject){
+        String state="同意";
+
+        Leave_stu leave_json = JSON.toJavaObject(jsonObject,Leave_stu.class);
+        leave_json.setState(state);
+
+        System.out.println(leave_stuMapper.updateLeaveState(leave_json.getId(),leave_json.getState()));
+        if (leave_stuMapper.updateLeaveState(leave_json.getId(), leave_json.getState()) == true){
+
+            return "success";
+
+        }
+
+        return "bad";
+    }
+
+    @RequestMapping("/leave/disagree")
+    @ResponseBody
+    public String leaveDisagree(@RequestBody JSONObject jsonObject){
+        String state="已拒绝";
+
+        Leave_stu leave_json = JSON.toJavaObject(jsonObject,Leave_stu.class);
+        leave_json.setState(state);
+
+        System.out.println(leave_stuMapper.updateLeaveState(leave_json.getId(),leave_json.getState()));
+        if (leave_stuMapper.updateLeaveState(leave_json.getId(), leave_json.getState()) == true){
+
+            return "success";
+
+        }
+
+        return "bad";
+    }
+
+
+    @RequestMapping("/schAdmin/backLeaveManage")
+    public String backLeave(String sch_id,Map<String,Object> map, HttpSession session){
+
+        School school = schoolMapper.findById(sch_id);
+        session.setAttribute("sch_id",school.getSch_id());
+        map.put("sch",school);
+
+        return "schAdmin/absenceManage";
+    }
+
+
+    @GetMapping("/schAdmin/dormitoryDistribution/{id}")
+    public String toDormitoryDistribution(@PathVariable("id") String id,Map<String,Object> map){
+
+        School school = schoolMapper.findById(id);
+        map.put("sch",school);
+
+        List<Apartment> apartments = apartmentMapper.findAll();
+        map.put("apartments",apartments);
+
+        return "schAdmin/dormitoryDistribution";
+    }
+    @PostMapping("/distribution/select/{id}")
+    public String distributionSelect(@PathVariable("id") String id,
+                                     @RequestParam("apartment") String apartment,
+                                     @RequestParam("apa_sex") String apa_sex,
+                                     @RequestParam("username") String username,
+                                     Map<String,Object> map){
+        if(apartment==""){
+            apartment=null;
+        }
+        if (apa_sex==""){
+            apa_sex=null;
+        }
+        if (username==""){
+            username=null;
+        }
+
+        School school = schoolMapper.findById(id);
+        map.put("sch",school);
+
+        //模糊查询
+        List<Apartment> apartments = apartmentMapper.findByDistribution(apartment,apa_sex,username);
+        map.put("apartments",apartments);
+
+        return "schAdmin/dormitoryDistribution";
+    }
+
+
+    @GetMapping("/distribution/details/{building}/{id}")
+    public String toDistributionDetails(@PathVariable("building") String building,@PathVariable("id") String id,Map<String,Object> map){
+
+        School school = schoolMapper.findById(id);
+        map.put("sch",school);
+        List<Student> students = studentMapper.selectByBuildingLike(building+"-");
+        map.put("students",students);
+        map.put("building",building);
+        return "schAdmin/distributionDetails";
+    }
+    @PostMapping("/distributionDetails/select/{id}/{building}")
+    public String detailsSelect(@PathVariable("id") String id,
+                                @PathVariable("building") String building,
+                                @RequestParam("grade") String grade,
+                                @RequestParam("number") String number,
+                                @RequestParam("floor") String floor,
+                                @RequestParam("username") String username,
+                                @RequestParam("major") String major,
+                                Map<String,Object> map){
+
+        String location="";
+
+        if (grade==""){
+            grade=null;
+        }
+        if (number==""){
+            number=null;
+        }
+
+        if (username==""){
+            username=null;
+        }
+        if (major==""){
+            major=null;
+        }
+
+        if (floor==""){
+            location=null;
+        }else {
+            location=building+"-"+floor;
+        }
+
+        School school = schoolMapper.findById(id);
+        map.put("sch",school);
+        map.put("building",building);
+
+        List<Student> students = studentMapper.selectByFloor(grade,number,location,username,major);
+        map.put("students",students);
+
+        return "schAdmin/distributionDetails";
+    }
+
+
+
 }

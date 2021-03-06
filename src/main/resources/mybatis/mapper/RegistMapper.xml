@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.college.mapper.RegistMapper">
+    <select id="queryRegists" resultType="com.example.college.pojo.Regist">
+        select * from regist where registrar=#{registrar}
+    </select>
+
+    <delete id="deleteRegist">
+        delete from regist where id=#{id}
+    </delete>
+
+    <insert id="insertRegist">
+        insert into regist(name,reason,in_time,out_time,phone,registrar)
+        values (#{name},#{reason},#{in_time},#{out_time},#{phone},#{registrar})
+    </insert>
+
+    <select id="queryByLike" resultType="com.example.college.pojo.Regist">
+        select * from regist
+        <where>
+            <if test="name!=null">
+                name=#{name}
+            </if>
+            <if test="reason!=null">
+                and reason like concat('%',#{reason},'%')
+            </if>
+            <if test="in_time!=null">
+                and in_time like concat('%',#{in_time},'%')
+            </if>
+            <if test="registrar!=null">
+                and registrar=#{registrar}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

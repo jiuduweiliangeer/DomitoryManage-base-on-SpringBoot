@@ -42,6 +42,9 @@
                     <li th:class="${activeURL=='feedbackProcessing'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
                         <a th:href="@{/feedbackProcessing/{id}(id=${id})}" href="">反馈信息</a>
                     </li>
+                    <li th:class="${activeURL=='alienRegistration'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
+                        <a th:href="@{/alienRegistration/{id}(id=${id})}" href="">外来登记</a>
+                    </li>
                     <li th:class="${activeURL=='personalMessage'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
                         <a th:href="@{/personalApaMessage/{id}(id=${id})}" href="">个人信息</a>
                     </li>

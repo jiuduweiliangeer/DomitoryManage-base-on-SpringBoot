@@ -34,6 +34,8 @@ public class ApartmentController {
     @Autowired
     AbsenceMapper absenceMapper;
     @Autowired
+    RegistMapper registMapper;
+    @Autowired
     HistoryMapper historyMapper;
     @Autowired
     Demo demo;
@@ -411,6 +413,29 @@ public class ApartmentController {
                                 @PathVariable("apa_id") String apa_id,
                                 Map<String,Object> map) throws ParseException {
         Apartment apartment=apartmentMapper.findById(apa_id);
+        String operate="完成申报处理";
+        String is_deal="已处理";
+        Date thisdate=format1.parse(format1.format(date));
+        Date date=new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US).parse(thistime);
+        String date1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINA).format(date);
+        Date date2=format1.parse(date1);
+        impairMapper.dealState(is_deal,id,date2);
+        /*impairMapper.dealState(is_deal,id,format1.parse(thistime));*/
+        List<Impair> impairs=impairMapper.selectByBuildingLike(apartment.getApartment()+"-");
+        historyMapper.insertHistory(apartment.getId(),identity,operate,thisdate);
+        map.put("impairs",impairs);
+        map.put("apa",apartment);
+        return "apaAdmin/declareProcessing";
+    }
+    /*用于一个重置状态的按钮*/
+
+    @GetMapping("/declareProcessing/dealReset/{id}/{thistime}/{apa_id}")
+    public String dealReset(@PathVariable("id") String id,
+                              @PathVariable("thistime") String thistime,
+                              @PathVariable("apa_id") String apa_id,
+                              Map<String,Object> map) throws ParseException {
+        Apartment apartment=apartmentMapper.findById(apa_id);
+        /*注意此处，is_deal和前台的操作判定不一样*/
         String is_deal="待处理";
         String operate="取消申报处理";
         Date thisdate=format1.parse(format1.format(date));
@@ -425,6 +450,10 @@ public class ApartmentController {
         map.put("apa",apartment);
         return "apaAdmin/declareProcessing";
     }
+
+
+
+
     /*管理员查询申报情况*/
     @PostMapping("/declareProcessing/{id}")
     public String selectDeclare(@PathVariable("id") String id,
@@ -538,6 +567,95 @@ public class ApartmentController {
         map.put("suggests",suggests);
         return "apaAdmin/feedbackProcessing";
     }
+    @GetMapping("/alienRegistration/{id}")
+    public String toAlienRegistration(@PathVariable("id") String id,
+                                      Map<String,Object> map){
+        Apartment apartment=apartmentMapper.findById(id);
+        map.put("apa",apartment);
+        List<Regist> regists = registMapper.queryRegists(id);
+
+        map.put("regists",regists);
+        return "apaAdmin/alienRegistration";
+
+    }
+    @GetMapping("/alienRegistration/delete/{id}/{apa_id}")
+    public String alienRegistrationDelete(@PathVariable("id") int id,
+                                          @PathVariable("apa_id") String apa_id,Map<String,Object> map) throws ParseException {
+        String operate = "删除登记";
+        Date thisdate=format1.parse(format1.format(date));
+        Apartment apartment=apartmentMapper.findById(apa_id);
+        map.put("apa",apartment);
+
+        try {
+            registMapper.deleteRegist(id);
+        }catch (Exception e){
+            logger.warn("删除出错");
+        }
+
+        List<Regist> regists = registMapper.queryRegists(apa_id);
+        map.put("regists",regists);
+        historyMapper.insertHistory(apartment.getId(),identity,operate,thisdate);
+
+
+        return "apaAdmin/alienRegistration";
+    }
+
+    @GetMapping("/alienRegistration/toAddRegist/{apa_id}")
+    public String toAlienRegistrationAdd(@PathVariable("apa_id") String apa_id,Map<String,Object> map) {
+
+        Apartment apartment=apartmentMapper.findById(apa_id);
+        map.put("apa",apartment);
+        return "apaAdmin/addRegist";
+    }
+    @PostMapping("/alienRegistration/addRegist/{apa_id}")
+    public String alienRegistrationAdd(@PathVariable("apa_id") String apa_id,
+                                       @RequestParam("name") String name,
+                                       @RequestParam("reason") String reason,
+                                       @RequestParam("in_time") String in_time,
+                                       @RequestParam("out_time") String out_time,
+                                       @RequestParam("phone") String phone,
+                                       Map<String,Object> map) throws ParseException {
+
+        String operate = "外来登记";
+        Date thisdate=format1.parse(format1.format(date));
+        System.out.println(apa_id);
+        Apartment apartment=apartmentMapper.findById(apa_id);
+        map.put("apa",apartment);
+        try{
+            registMapper.insertRegist(name,reason,in_time,out_time,phone,apa_id);
+        }catch (Exception e){
+            logger.warn("添加出错!");
+        }
+
+        historyMapper.insertHistory(apartment.getId(),identity,operate,thisdate);
+        List<Regist> regists = registMapper.queryRegists(apa_id);
+        map.put("regists",regists);
+
+
+        return "apaAdmin/alienRegistration";
+    }
+
+    @PostMapping("/alienRegistration/select/{apa_id}")
+    public String alienRegistrationSelect(@PathVariable("apa_id") String apa_id,@RequestParam("name") String name,@RequestParam("reason") String reason,@RequestParam("in_time") String in_time,Map<String,Object> map){
+        if (name==""){
+            name=null;
+        }
+        if (reason==""){
+            reason=null;
+        }
+        if (in_time==""){
+            in_time=null;
+        }
+
+
+        Apartment apartment=apartmentMapper.findById(apa_id);
+        List<Regist> regists = registMapper.queryByLike(name,reason,in_time,apa_id);
+        map.put("apa",apartment);
+        map.put("regists",regists);
+        return "apaAdmin/alienRegistration";
+    }
+
+
     /*进入个人信息页面*/
     @GetMapping("/personalApaMessage/{id}")
     public String toPersonalApa(@PathVariable("id") String id,

@@ -7,14 +7,8 @@
 
     <ul class="layui-nav layui-layout-right">
         <li class="layui-nav-item">
-            <a href="javascript:;">
-                <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
-                用户名
-            </a>
-            <dl class="layui-nav-child">
-                <dd><a href="">基本资料</a></dd>
-                <dd><a href="">安全设置</a></dd>
-            </dl>
+            <a href="javascript:;" id="sch_id">[[${id}]]</a>
+
         </li>
         <li class="layui-nav-item"><a th:href="@{/backLogin}" href="">退了</a></li>
     </ul>
@@ -36,8 +30,8 @@
                         </dd>
                     </dl>
                 </li>
-                <li th:class="${activeURL=='absenceManage'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}"><a th:href="@{/schAdmin/absenceManage}" href="javascript:;">缺 勤 管 理</a></li>
-                <li th:class="${activeURL=='dormitoryDistribution'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}"><a th:href="@{/schAdmin/dormitoryDistribution}" href="javascript:;">宿 舍 分 布 情 况</a></li>
+                <li th:class="${activeURL=='absenceManage'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}"><a th:href="@{/schAdmin/absenceManage/{id}(id=${id})}" href="javascript:;">缺 勤 管 理</a></li>
+                <li th:class="${activeURL=='dormitoryDistribution'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}"><a th:href="@{/schAdmin/dormitoryDistribution/{id}(id=${id})}" href="javascript:;">宿 舍 分 布 情 况</a></li>
 
             </ul>
 

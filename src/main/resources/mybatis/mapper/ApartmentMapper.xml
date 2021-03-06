@@ -25,12 +25,12 @@
         </if>
     </select>
     <insert id="insertApartment">
-        INSERT INTO apartment(id,username,password,sex,age,phone,apartment)
-        VALUES (#{id},#{username},#{password},#{sex},#{age},#{phone},#{apartment})
+        INSERT INTO apartment(id,username,password,sex,age,phone,apartment,apa_sex)
+        VALUES (#{id},#{username},#{password},#{sex},#{age},#{phone},#{apartment},#{apa_sex})
     </insert>
     <update id="setExcludeStateAndEmail">
         UPDATE apartment SET username=#{username},password=#{password}
-        ,sex=#{sex},age=#{age},phone=#{phone},apartment=#{apartment} WHERE id=#{id}
+        ,sex=#{sex},age=#{age},phone=#{phone},apartment=#{apartment},apa_sex=#{apa_sex} WHERE id=#{id}
     </update>
     <update id="setNewPassword">
         UPDATE apartment SET password=#{password} WHERE id=#{id}
@@ -41,4 +41,20 @@
     <delete id="deleteApartment">
         DELETE FROM apartment WHERE id=#{id}
     </delete>
+
+    <select id="findByDistribution" resultType="com.example.college.pojo.Apartment">
+        select * from apartment
+        <where>
+        <if test="apartment!=null">
+            apartment=#{apartment}
+        </if>
+        <if test="apa_sex!=null">
+            and apa_sex=#{apa_sex}
+        </if>
+        <if test="username!=null">
+            and username like concat('%',#{username},'%')
+        </if>
+    </where>
+    </select>
+
 </mapper>
