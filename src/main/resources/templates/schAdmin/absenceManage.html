@@ -3,10 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>宿舍管理系统</title>
+    <title>layout 后台大布局 - Layui</title>
 
     <link rel="stylesheet" th:href="@{/layui/css/layui.css}" href="../src/css/layui.css">
     <link th:href="@{/asserts/css/bootstrap.min.css}" href="../../static/asserts/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link th:href="@{/asserts/css/dashboard.css}" href="../../static/asserts/css/dashboard.css" rel="stylesheet">
+
     <script th:src="@{/layui/layui.js}" src="../src/layui.js"></script>
 
     <style type="text/css">
@@ -40,51 +44,68 @@
     <!-- 内容主体区域 -->
 
     <div class="layui-body" style="padding-top: 50px">
-            <div class="layui-form-item" style="padding-left: 30px">
-                <div class="layui-inline">
-                    <label class="layui-form-label" style="padding: 5px">处理状态: </label>
-                    <div class="layui-input-inline">
-                        <input class="layui-input" name="state" id="state" autocomplete="off">
+        <div class="layui-container">
+            <div class="layui-main">
+                <form style="padding-left: 30px" class="form-inline">
+                    <div class="form-group">
+                        <lable><b>年级 : </b></lable>
+                        <select class="form-control" style="margin-left: 10px" name="state">
+                            <option th:value="大一" th:text="大一"></option>
+                            <option th:value="大二" th:text="大二"></option>
+                            <option th:value="大三" th:text="大三"></option>
+                            <option th:value="大四" th:text="大四"></option>
+                        </select>
                     </div>
-                </div>
+                    <div class="form-group" id="input_1" style="margin-left: 20px">
+                        <label for="exampleInputName2">栋数: </label>
+                        <input style="margin-left: 10px" type="text" class="form-control" id="exampleInputName2" placeholder="请输入栋数">
+                    </div>
+                    <div class="form-group" id="input_2">
+                        <label for="exampleInputEmail2">楼号: </label>
+                        <input style="margin-left: 10px" type="text" class="form-control" id="exampleInputEmail2" placeholder="请输入楼号">
+                    </div>
 
-                <div class="layui-inline">
-                    <label class="layui-form-label" style="padding: 5px">学号: </label>
-                    <div class="layui-input-inline">
-                        <input class="layui-input" name="id" id="id" autocomplete="off">
-                    </div>
-                </div>
+                    <button id="btn_demo" type="submit" class="btn btn-primary">查  询</button>
 
-                <div class="layui-inline">
-                    <label class="layui-form-label" style="padding: 5px">宿舍: </label>
-                    <div class="layui-input-inline">
-                        <input class="layui-input" name="location" id="location" autocomplete="off">
-                    </div>
-                </div>
 
-                <div class="layui-inline">
-                    <label class="layui-form-label" style="padding: 5px">栋数: </label>
-                    <div class="layui-input-inline">
-                        <input class="layui-input" name="building" id="building" autocomplete="off">
-                    </div>
-                </div>
-                <div class="layui-inline">
-                    <button class="layui-btn layui-btn-normal" id="doSearch">查 询</button>
+                </form>
+
+                <br>
+
+                <div class="table-responsive" style="padding-left: 30px">
+                    <table id="table1" class="table table-striped table-sm">
+                        <thead>
+                        <tr>
+                            <th>栋数</th>
+                            <th>宿舍</th>
+                            <th>日期</th>
+                            <th>状态</th>
+                            <th>操作</th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <tr>
+                            <td th:text="1"></td>
+                            <td th:text="2"></td>
+                            <td th:text="3"></td>
+                            <td th:text="4"></td>
+
+                            <td>
+                                <a class="btn btn-sm btn-danger">处理</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <br>
+
+
                 </div>
 
             </div>
-            <br>
-            <div class="" style="padding-left: 30px">
-                <table class="layui-hide" id="leaveTable" lay-filter="demo_1">
 
-                </table>
-
-
-            </div>
-
-
-
-
+        </div>
 
     </div>
 
@@ -94,153 +115,10 @@
 
 </div>
 
-<script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="agree">同意</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="disagree">拒绝</a>
-</script>
-
 <script>
 
-    layui.use(['element','table','layer'],function () {
+    layui.use('element',function () {
         var element = layui.element;
-        var table = layui.table;
-        var layer = layui.layer;
-        var $ = layui.jquery;
-
-
-        //渲染表格
-        table.render({
-            elem: '#leaveTable'
-            , url: '/schAdmin/leaveProcessing'
-            , title: '用户数据表'
-            , page: true
-            , limit:10
-            , id:'testReload'
-            , cols: [
-                [
-                    // {type: 'checkbox', fixed: 'left'}
-                      {field: 'id', title: '学号'}
-                    , {field: 'username', title: '姓名'}
-                    , {field: 'reason', title: '原因'}
-                    , {field: 'location', title: '宿舍'}
-                    , {field: 'now_time', title: '开始时间'}
-                    , {field: 'end_time', title: '结束时间'}
-                    , {field: 'state', title: '状态'}
-                    , {field: 'right', title: '操作',toolbar: '#barDemo'}
-
-                ]
-            ]
-
-
-        });
-
-        $('#doSearch').on('click',function () {
-                var id = $('#id');
-                var state = $('#state');
-                var location = $('#location');
-                var building = $('#building');
-
-                table.reload('testReload',{
-
-                    where:{
-                        'id':id.val(),
-                        'state':state.val(),
-                        'location':location.val(),
-                        'building':building.val()
-                    }
-                    ,page: {
-
-                    }
-
-                })
-
-        });
-
-
-        table.on('tool(demo_1)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
-            var data = obj.data; //获得当前行数据
-            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
-            var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
-            var sch_id = $('#sch_id').text();
-
-
-
-
-            console.log(sch_id);
-
-
-            console.log(data);
-
-            if(layEvent === 'agree'){ //查看
-                //do somehing
-                $.ajax({
-                    type : 'post',
-                    url : '/leave/agree',
-                    data : JSON.stringify(
-                        {
-                        id:data.id,
-                        username:data.username,
-                        location:data.location,
-                        reason:data.reason,
-                        now_time:data.now_time,
-                        end_time:data.end_time,
-                        state:data.state
-
-                    }
-                    ),
-                    contentType:"application/json",
-                    success:function (result) {
-                        if (result=="success"){
-                            console.log("yes");
-                            window.location.href="/schAdmin/backLeaveManage?sch_id="+sch_id;
-                        }
-
-                    }
-
-                })
-
-            } else if(layEvent === 'disagree'){ //删除
-                $.ajax({
-                    type : 'post',
-                    url : '/leave/disagree',
-                    data : JSON.stringify(
-                        {
-                            id:data.id,
-                            username:data.username,
-                            location:data.location,
-                            reason:data.reason,
-                            now_time:data.now_time,
-                            end_time:data.end_time,
-                            state:data.state
-
-                        }
-                    ),
-                    contentType:"application/json",
-                    success:function (result) {
-                        if (result=="success"){
-                            console.log("yes");
-                            window.location.href="/schAdmin/backLeaveManage?sch_id="+sch_id;
-                        }
-
-                    }
-
-                })
-
-            } else if(layEvent === 'edit'){ //编辑
-                //do something
-
-                //同步更新缓存对应的值
-                obj.update({
-                    username: '123'
-                    ,title: 'xxx'
-                });
-            } else if(layEvent === 'LAYTABLE_TIPS'){
-                layer.alert('Hi，头部工具栏扩展的右侧图标。');
-            }
-        });
-
-
-
     })
 
 
