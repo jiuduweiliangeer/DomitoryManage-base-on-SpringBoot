@@ -33,4 +33,6 @@ public interface StudentMapper {
     public List<Student> selectByBuildingLike(String building);
     /*模糊查询，用于管理员在学生信息页面查询*/
     public List<Student> selectByApartment(String building,String grade,String location,String stu_id);
+    /*模糊查询，用于distributionDetails页面进行:姓名 年级 班级 寝室号 专业 的查询*/
+    public List<Student> selectByFloor(String grade,String number,String location,String username,String major);
 }

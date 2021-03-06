@@ -16,6 +16,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -77,5 +78,13 @@ Leave_stuMapper leaveStuMapper;
         String building="15-";
         List<Student> students=studentMapper.selectByBuildingLike(building);
         System.out.println(students.toString());
+    }
+
+    @Test
+    public  void  testList(){
+        List<Object> list = new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        System.out.println(list.size());
     }
 }

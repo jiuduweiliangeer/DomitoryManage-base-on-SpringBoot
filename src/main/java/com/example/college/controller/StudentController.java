@@ -1,10 +1,7 @@
 package com.example.college.controller;
 
 import com.example.college.mapper.*;
-import com.example.college.pojo.Apartment;
-import com.example.college.pojo.Impair;
-import com.example.college.pojo.Leave_stu;
-import com.example.college.pojo.Student;
+import com.example.college.pojo.*;
 import com.example.college.sendemail.Demo;
 import com.example.college.sendemail.Send;
 import org.slf4j.Logger;
@@ -35,6 +32,8 @@ public class StudentController {
     ApartmentMapper apartmentMapper;
     @Autowired
     AbsenceMapper absenceMapper;
+    @Autowired
+    HistoryMapper historyMapper;
     @Autowired
     Demo demo;
     String identity="学生";
@@ -171,13 +170,17 @@ public class StudentController {
                                @RequestParam("thisname") String thisname,
                                @RequestParam("content") String content,
                                Map<String,Object> map) throws ParseException {
+        String operate="维修申报";
         Date date=new Date();
+        Date thisdate = null;
         Student student=studentMapper.findById(id);
         System.out.println(format1.parse(format1.format(date)));
         impairMapper.insertImpair(id, student.getLocation(),thisname,format1.parse(format1.format(date)),content,"待处理",student.getUsername());
         List<Impair> impairs=impairMapper.findByID(id);
         map.put("impairs",impairs);
         map.put("stu",student);
+        thisdate = format1.parse(format1.format(date));
+        historyMapper.insertHistory(id,identity,operate,thisdate);
         return "student/studentImpair";
 
     }
@@ -211,6 +214,8 @@ public class StudentController {
                               Map<String,Object> map) throws ParseException {
         Student student=studentMapper.findById(id);
         Date date=new Date();
+        Date thisdate = null;
+        String operate = "外出请假";
         Date dateNow=format1.parse(format1.format(date));
         /*
         * 此处还需要做一个判定，判断开始时间和结束时间的先后，暂未做，前端后续工程完工后，进行补充
@@ -218,6 +223,7 @@ public class StudentController {
         * 设置一个中间判断值为t，类型为boolean
         * */
         Date date1= format1.parse(now_time.replace("T"," ")+":00");//开始时间
+
         Date date2= format1.parse(end_time.replace("T"," ")+":00");//结束时间
         boolean t=true;
         try{
@@ -242,6 +248,9 @@ public class StudentController {
         List<Leave_stu> leaves= leaveStuMapper.findByID(id);
         map.put("leaves",leaves);
         map.put("stu",student);
+        thisdate = format1.parse(format1.format(date));
+        historyMapper.insertHistory(id,identity,operate,thisdate);
+
         return "student/studentLeave";
     }
     /*进入建议页面*/
@@ -256,10 +265,14 @@ public class StudentController {
     public String SelectSuggest(@PathVariable("id") String id,
                                 @RequestParam("content") String content,
                                 Map<String,Object> map) throws ParseException {
+        String operate = "意见反馈";
         Date date=new Date();
+        Date thisdate = null;
         Student student=studentMapper.findById(id);
         suggestMapper.insertSuggest(id,student.getUsername(),student.getLocation(),format1.parse(format1.format(date)),content);
         map.put("stu",student);
+        thisdate = format1.parse(format1.format(date));
+        historyMapper.insertHistory(id,identity,operate,thisdate);
         return "student/studentSuggest";
     }
     /*进入个人信息*/
@@ -358,6 +371,35 @@ public class StudentController {
             s="student/bindEmail_2";
         }
         return s;
+    }
+
+
+    /*进入历史记录页面*/
+    @GetMapping("/history/{id}")
+    public String toStudentHistory(@PathVariable("id") String id,
+                                      Map<String,Object> map){
+
+        Student student=studentMapper.findById(id);
+        List<History> histories=historyMapper.findByID(id);
+        map.put("stu",student);
+        map.put("histories",histories);
+        return "student/studentHistory";
+    }
+
+    /*学生查询历史记录*/
+    @PostMapping("/historySelect/{id}")
+    public String studentHistorySelect(@PathVariable("id") String id,
+                                          @RequestParam("operate") String operate,
+                                          Map<String,Object> map){
+        if (operate==""){
+            operate=null;
+        }
+
+        List<History> histories=historyMapper.selectByApartment(id,operate);
+        Student student=studentMapper.findById(id);
+        map.put("stu",student);
+        map.put("histories",histories);
+        return "student/studentHistory";
     }
 
 }

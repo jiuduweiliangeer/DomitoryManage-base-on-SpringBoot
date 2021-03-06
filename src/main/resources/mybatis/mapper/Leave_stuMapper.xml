@@ -40,4 +40,40 @@
             AND location=#{location}
         </if>
     </select>
+
+    <select id="selectTotal" resultType="int">
+        select count(*) from leave_stu
+    </select>
+
+<!--    <select id="selectCounts" resultType="int">-->
+<!--        select count(*) from leave_stu where location like concat('%',#{building},'%')-->
+<!--    </select>-->
+
+    <select id="selectLeaves" resultType="com.example.college.pojo.Leave_stu">
+        select * from leave_stu limit #{page},#{limit}
+    </select>
+
+    <select id="schLeaves" resultType="com.example.college.pojo.Leave_stu">
+        select * from leave_stu
+        <where>
+            <if test="state!=null">
+                state = #{state}
+            </if>
+            <if test="id!=null">
+                and id = #{id}
+            </if>
+            <if test="location!=null">
+                and location = #{location}
+            </if>
+            <if test="building!=null">
+                and location like concat('%',#{building},'%')
+            </if>
+
+        </where>
+            limit #{page},#{limit}
+    </select>
+    <update id="updateLeaveState">
+        UPDATE leave_stu SET state=#{state} WHERE id=#{id}
+    </update>
+
 </mapper>

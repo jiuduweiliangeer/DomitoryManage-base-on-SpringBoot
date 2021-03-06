@@ -61,6 +61,9 @@
                         <li th:class="${activeURL=='studentSuggest'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
                             <a th:href="@{/suggest/{id}(id=${id})}">建议反馈</a>
                         </li>
+                        <li th:class="${activeURL=='studentHistory'?'layui-nav-item layui-nav-itemed':'layui-nav-item'}">
+                            <a th:href="@{/history/{id}(id=${id})}">历史记录</a>
+                        </li>
                     </ul>
                 </div>
             </div>
